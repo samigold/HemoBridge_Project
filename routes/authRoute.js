@@ -6,11 +6,11 @@ router.get('/', (req, res) => {
     res.send('Welcome to HemoBridge!');
 });
 
-router.get('/login', (req, res) => {
+router.post('/login', (req, res) => {
     res.send('Login page');
 });
 
-router.get('/register', (req, res) => {
+router.post('/register', (req, res) => {
     res.send('Register page');
 });
 

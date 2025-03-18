@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
         required:true
     }, // "active", "pending", "suspended", "inactive"
     verificationToken: String,
-    verificationExpires: Date,
+    verificationTokenExpiresAt: Date,
     resetToken: String,
     resetTokenExpires: Date,
     failedLoginAttempts: Number,
