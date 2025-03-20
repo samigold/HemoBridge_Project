@@ -10,7 +10,7 @@ import cookieParser from 'cookie-parser';
 dotenv.config();
 dbConn();
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8000;
 const HOST = process.env.HOST || 'localhost'
 
 const app = express();
