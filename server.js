@@ -11,7 +11,7 @@ dotenv.config();
 dbConn();
 
 const PORT = process.env.PORT || 8000;
-const HOST = process.env.HOST || 'localhost'
+const HOST = '0.0.0.0';
 
 const app = express();
 
