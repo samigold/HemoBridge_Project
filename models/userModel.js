@@ -1,9 +1,8 @@
-import { timeStamp } from 'console';
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
     // users collection schema
-    _id: ObjectId,  // MongoDB's default unique identifier
+
     name:{
         type:String,
         required:true
@@ -15,7 +14,7 @@ const userSchema = new mongoose.Schema({
     },  // unique, indexed
     password:{
         type:String,
-        required
+        required:true
     },
     role: {
         type: String,
@@ -54,7 +53,6 @@ const userSchema = new mongoose.Schema({
       emergencyAlerts: Boolean,
       marketingCommunications: Boolean
     },
-    timeStamps: true
-});
+}, {timestamps: true});
 
 export const User = mongoose.model('User', userSchema);

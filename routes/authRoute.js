@@ -1,4 +1,5 @@
 import express from 'express';
+import { login, register } from '../controllers/authController.js';
 
 const router = express.Router();
 
@@ -6,12 +7,8 @@ router.get('/', (req, res) => {
     res.send('Welcome to HemoBridge!');
 });
 
-router.post('/login', (req, res) => {
-    res.send('Login page');
-});
+router.post('/login', login);
 
-router.post('/register', (req, res) => {
-    res.send('Register page');
-});
+router.post('/register', register);
 
 export default router;
