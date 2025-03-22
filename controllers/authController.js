@@ -12,23 +12,24 @@ import { generateTokenAndSetCookie } from '../utils/generateTokenAndSetCookie.js
 export const register = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
 
-    // check if all fields are provided
-    if(!name || !email || !password){
+    // Check if all fields are provided
+    if (!name || !email || !password) {
         res.status(400);
         throw new Error('All fields are required');
     }
 
-    // check if user already exists
-    const userExists = await User.findOne({email});
-    if(userExists){
-        res.status(400).json({success: false, message: 'User already exists'});
+    // Check if user already exists
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+        res.status(400).json({ success: false, message: 'User already exists' });
+        return;
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
     const verificationToken = generateVerificationCode();
     console.log(verificationToken);
 
-    // create new user
+    // Create new user
     const user = await User.create({
         name,
         email,
@@ -37,22 +38,24 @@ export const register = asyncHandler(async (req, res) => {
         verificationTokenExpiresAt: Date.now() + 10 * 60 * 1000 // 10 minutes
     });
 
-    if(user){
+    if (user) {
         await user.save();
 
-        //jwt token
+        // Generate JWT token and set it in a cookie
         generateTokenAndSetCookie(res, user._id);
 
-        // send email with verification code
+        // Send email with verification code (if implemented)
         // sendEmail(user.email, verificationToken);
 
+        // Respond with user data (excluding password)
         res.status(201).json({
             success: true,
             message: 'User created successfully',
-            ...user.doc,
-            password: undefined});
+            name: user.name,
+            email: user.email
+        });
     } else {
-        res.status(400).json({success: false, message: 'Error creating user'});
+        res.status(400).json({ success: false, message: 'Error creating user' });
         throw new Error('Invalid user data');
     }
 });
