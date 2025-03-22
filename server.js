@@ -16,14 +16,14 @@ dotenv.config();
 dbConn();
 
 const PORT = process.env.PORT || 8000;
-const HOST = process.env.HOST || '0.0.0.0';
+const HOST =  '0.0.0.0';
 
 const app = express();
 
-const corsOptions = {
-    origin: 'http://localhost:8000', // Replace with your frontend's URL
-    credentials: true, // Allow cookies to be sent with requests
-};
+// const corsOptions = {
+//     origin: 'http://localhost:8000', // Replace with your frontend's URL
+//     credentials: true, // Allow cookies to be sent with requests
+// };
 
 app.use(express.json());
 app.use(cors()); // Add this line below the app.use(express.json()) line
