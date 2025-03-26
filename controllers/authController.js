@@ -144,6 +144,7 @@ export const registerFacility = asyncHandler(async (req, res) => {
 
     // Send email with verification code (if implemented)
     // sendEmail(user.email, verificationToken);
+    await sendVerificationEmail(user.email, verificationToken);
 
     res.status(201).json({
         success: true,
@@ -198,5 +199,6 @@ export const login = asyncHandler(async (req, res) => {
     res.status(200).json({
         success: true,
         message: `Welcome back ${user.name}`,
+        user
     });
 })
