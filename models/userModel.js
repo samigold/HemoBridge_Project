@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
     // users collection schema
-
     name:{
         type:String,
         required:true
@@ -18,7 +17,7 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ["donor", "healthcare_staff", "blood_bank_staff", "admin"],
+        enum: ["donor", "healthcare_staff", "admin"],
         default: "donor",
         required: true
     },  // "donor", "healthcare_staff", "blood_bank_staff", "admin"
