@@ -325,5 +325,25 @@ export const forgotPassword = asyncHandler(async (req, res) => {
 // @route   POST /auth/reset-password/:token
 // @access  Public
 export const resetPassword = asyncHandler(async (req, res) => {
-    
-})
+    const { token } = req.params;
+    const { password } = req.body;
+
+    const user = await User.findOne({resetToken: token, resetTokenExpires: {$gt: Date.now()}});
+
+    if(!user){
+        return res.status(400).json({message: 'Invalid or expired reset token'});
+    }
+
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    user.password = passwordHash;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpiresAt = undefined;  
+
+    await user.save();
+
+    //send email
+    await sendPasswordResetSuccess(user.email);
+
+    res.status(200).json({message: 'Password reset successfully'});
+});
