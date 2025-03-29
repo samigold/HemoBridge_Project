@@ -68,3 +68,14 @@
 {"level":"info","message":"Server running on http://0.0.0.0:8000"}
 {"level":"info","message":"MongoDB connected: hemobridgedb-shard-00-00.m4z9p.mongodb.net"}
 {"level":"info","message":"Server running on http://0.0.0.0:8000"}
+{"level":"info","message":"Server running on http://0.0.0.0:8000"}
+{"level":"info","message":"MongoDB connected: hemobridgedb-shard-00-02.m4z9p.mongodb.net"}
+{"level":"info","message":"Server running on http://0.0.0.0:8000"}
+{"level":"info","message":"MongoDB connected: hemobridgedb-shard-00-00.m4z9p.mongodb.net"}
+{"level":"info","message":"Server running on http://0.0.0.0:8000"}
+{"level":"info","message":"MongoDB connected: hemobridgedb-shard-00-00.m4z9p.mongodb.net"}
+{"level":"info","message":"Server running on http://0.0.0.0:8000"}
+{"code":"ETIMEOUT","hostname":"_mongodb._tcp.hemobridgedb.m4z9p.mongodb.net","level":"info","message":"An Error occured querySrv ETIMEOUT _mongodb._tcp.hemobridgedb.m4z9p.mongodb.net","stack":"Error: querySrv ETIMEOUT _mongodb._tcp.hemobridgedb.m4z9p.mongodb.net\n    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:291:17)","syscall":"querySrv"}
+{"level":"info","message":"Server running on http://0.0.0.0:8000"}
+{"level":"info","message":"MongoDB connected: hemobridgedb-shard-00-00.m4z9p.mongodb.net"}
+{"level":"info","message":"Server running on http://0.0.0.0:8000"}
