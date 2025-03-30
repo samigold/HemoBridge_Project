@@ -91,8 +91,10 @@ export const registerDonor = asyncHandler(async (req, res) => {
 export const registerFacility = asyncHandler(async (req, res) => {
     const { facilityName, personnelName, email, phone, personnelRole, address, password } = req.body;
 
+    console.log(req.body);
     // Check if all fields are provided
     if (!facilityName || !personnelName || !email || !phone || !personnelRole || !address || !password) {
+        console.log('missing fields', {facilityName, personnelName, email, phone, personnelRole, address, password});
         res.status(400);
         throw new Error('All fields are required');
     }
