@@ -100,7 +100,66 @@ Pre-Deployment Url: `https://hemobridge-project.onrender.com/`
         "message": "Error creating Facility"
 }
 ```
+#### 6. Verify Email
+**Endpoint:** `/auth/verify-email`  
+**Method:** `POST`  
+**Description:** Verifies a user's email using a verification token.  
+**Request Body:**
+```json
+{
+        "verificationToken": "string"
+}
+```
+**Response:**
+- **200 OK**
+```json
+{
+        "success": true,
+        "message": "Email successfully verified"
+}
+```
+- **400 Bad Request**
+```json
+{
+        "success": false,
+        "message": "Invalid or expired verification token"
+}
+```
 
+---
+
+#### 7. Resend Verification Email
+**Endpoint:** `/auth/resend-verification-email`  
+**Method:** `POST`  
+**Description:** Resends the email verification link to the user's email.  
+**Request Body:**
+```json
+{
+        "email": "string"
+}
+```
+**Response:**
+- **200 OK**
+```json
+{
+        "success": true,
+        "message": "Verification email sent successfully"
+}
+```
+- **400 Bad Request**
+```json
+{
+        "success": false,
+        "message": "Error sending verification email"
+}
+```
+- **404 Not Found**
+```json
+{
+        "success": false,
+        "message": "User not found"
+}
+```
 ---
 
 #### 3. Login User
@@ -129,7 +188,60 @@ Pre-Deployment Url: `https://hemobridge-project.onrender.com/`
         "message": "Invalid email or password"
 }
 ```
+#### 4. Forgot Password
+**Endpoint:** `/auth/forgot-password`  
+**Method:** `POST`  
+**Description:** Sends a password reset link to the user's email.  
+**Request Body:**
+```json
+{
+        "email": "string"
+}
+```
+**Response:**
+- **200 OK**
+```json
+{
+        "success": true,
+        "message": "Password reset link sent to your email"
+}
+```
+- **400 Bad Request**
+```json
+{
+        "success": false,
+        "message": "Error sending password reset link"
+}
+```
 
+---
+
+#### 5. Reset Password
+**Endpoint:** `/auth/reset-password`  
+**Method:** `POST`  
+**Description:** Resets the user's password using a valid reset token.  
+**Request Body:**
+```json
+{
+        "resetToken": "string",
+        "newPassword": "string"
+}
+```
+**Response:**
+- **200 OK**
+```json
+{
+        "success": true,
+        "message": "Password successfully reset"
+}
+```
+- **400 Bad Request**
+```json
+{
+        "success": false,
+        "message": "Invalid or expired reset token"
+}
+```
 ---
 
 ### Error Handling

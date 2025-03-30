@@ -11,12 +11,6 @@ const donorSchema = new mongoose.Schema({
       type: String,
       required: true
     },
-    dateOfBirth: Date,
-    gender: {
-      type: String,
-      enum: ['male', 'female'],
-      required: true
-    },
     bloodType: {
       type: String,
       enum: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
