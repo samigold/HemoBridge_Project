@@ -3,16 +3,16 @@ import { UserRecord, UserRoles } from './user.record';
 
 const userSchema = new mongoose.Schema<UserRecord>({
     // users collection schema
-    first_name: {
-        type: String,
-        required: true,
-        lowercase: true
-    },
-    last_name: {
-        type: String,
-        required: true,
-        lowercase: true
-    },
+    is_active: {
+        type: Boolean,
+        default: true,
+        required: true
+    }, 
+    is_suspended: {
+        type: Boolean,
+        default: false,
+        required: true
+    }, 
     email: {
         type:String,
         required:true,

@@ -4,9 +4,11 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors'; // Import the cors package
 import BaseRouter from './modules/main.routes';
 import logger from './insfrastructure/logger/logger';
+import { dbConn } from './insfrastructure/db/dbConn';
+import "src/shared/events/event.listeners";
 
 dotenv.config();
-// dbConn();
+dbConn();
 
 const app = express();
 

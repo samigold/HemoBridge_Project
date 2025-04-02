@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// TODO: create a schema with donor record
 const donorSchema = new mongoose.Schema({
     // donorProfiles collection
     userId: {
@@ -11,6 +12,16 @@ const donorSchema = new mongoose.Schema({
       type: String,
       required: true
     },
+    first_name: {
+      type: String,
+      required: true,
+      lowercase: true
+  },
+  last_name: {
+      type: String,
+      required: true,
+      lowercase: true
+  },
     bloodType: {
       type: String,
       enum: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],

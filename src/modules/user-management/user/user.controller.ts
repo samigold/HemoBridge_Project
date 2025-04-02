@@ -5,21 +5,21 @@ import { UserRoles } from "./model/user.record";
 export const UserController = {
     registerDonor: (req: Request, res: Response) => {
 
-        const { first_name, last_name, email, password, phone, dateOfBirth, gender, bloodType, address } = req.body;
+        const { firstName, lastName, email, password, phoneNumber, dateOfBirth, gender, bloodType, address } = req.body;
 
-        if (!first_name || !last_name || !email || !password || !phone || !dateOfBirth || !gender || !bloodType || !address) {
+        if (!firstName || !lastName || !email || !password || !phoneNumber || !dateOfBirth || !gender || !bloodType || !address) {
             res.status(400);
             throw new Error('All fields are required');
         }
 
         UserService.create({
-            first_name,
-            last_name,
+            first_name: firstName,
+            last_name: lastName,
             email,
             password,
             role: UserRoles.DONOR
-        })
-        .catch((error)=> {
+
+        }).catch(()=> {
             throw new Error('Invalid donor data. Error creating Donor');
         })
     },

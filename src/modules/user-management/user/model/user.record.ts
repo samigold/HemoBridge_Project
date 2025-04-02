@@ -8,8 +8,6 @@ export interface UserRecord {
     email: string;
     password_hash: string;
     role: string;
-    first_name: string;
-    last_name: string;
     created_at: Date;
     updated_at: Date;
 }

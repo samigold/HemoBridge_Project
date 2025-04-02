@@ -5,10 +5,7 @@ interface UserEntity {
     isActive: boolean;
     isSuspended: boolean;
     email: string;
-    passwordHash: string;
     role: string;
-    firstName: string;
-    lastName: string;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -18,14 +15,19 @@ export const UserEntity:UserEntity|null = {
     isActive: false,
     isSuspended: false,
     email: "",
-    passwordHash: "",
     role: "",
-    firstName: "",
-    lastName: "",
     createdAt: undefined,
     updatedAt: undefined
 }
 
-export function fromRecordToEntity(record: UserRecord) {
-    return Object.assign(record, UserEntity);
+export function fromRecordToEntity(record: UserRecord): UserEntity {
+    return {
+        id: record.id,
+        isActive: record.is_active,
+        isSuspended: record.is_suspended,
+        email: record.email,
+        role: record.role,
+        createdAt: record.created_at,
+        updatedAt: record.updated_at
+    }
 }
