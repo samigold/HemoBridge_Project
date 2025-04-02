@@ -6,6 +6,7 @@ import BaseRouter from './modules/main.routes';
 import logger from './insfrastructure/logger/logger';
 import { dbConn } from './insfrastructure/db/dbConn';
 import "src/shared/events/event.listeners";
+import { errorHandler } from './shared/middleware/errorHandler';
 
 dotenv.config();
 dbConn();
@@ -23,7 +24,7 @@ app.use(cookieParser());
 
 app.use('', BaseRouter);
 
-// app.use(errorHandler)
+app.use(errorHandler)
 
 app.listen(Number(process.env.PORT) || 8000, process.env.HOST, () => {
     logger.info(`Server running on http://${process.env.HOST}:${process.env.PORT}`);

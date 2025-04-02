@@ -15,6 +15,7 @@ export const UserService = {
             first_name: newUser.first_name,
             last_name: newUser.last_name,
             email: newUser.email,
+            phone_number: newUser.phone_number,
             password_hash: passwordHash,
             role: newUser.role
         })
@@ -26,7 +27,7 @@ export const UserService = {
         
         const createdUserEntity = fromRecordToEntity(createdUserRecord);
         // emit the user created successfully event
-        eventBus.emit(USER_EVENTS.CREATED, { user_id: createdUserEntity.id });
+        eventBus.emit(USER_EVENTS.CREATED, { user_id: createdUserEntity.id, email: createdUserEntity.email, first_name: newUser.first_name, last_name: newUser.last_name, phone_number: newUser.phone_number, blood_type: newUser.blood_type });
 
         logger.info(createdUserEntity)
         return fromRecordToEntity(createdUserRecord);

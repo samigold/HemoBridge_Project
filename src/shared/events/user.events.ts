@@ -4,4 +4,10 @@ export enum USER_EVENTS {
 
 export interface UserCreatedEvent {
     user_id: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    phone_number: string;
+    blood_type: string;
+    role: string;
 }

@@ -1,14 +1,15 @@
 import mongoose from "mongoose";
+import { DonorRecord, DonorBloodTypes } from "./donor.record";
 
 // TODO: create a schema with donor record
-const donorSchema = new mongoose.Schema({
+const donorSchema = new mongoose.Schema<DonorRecord>({
     // donorProfiles collection
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+    id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users',
+      required: true,
     },  // reference to users collection
-    phone:{
+    phone_number:{
       type: String,
       required: true
     },
@@ -22,22 +23,17 @@ const donorSchema = new mongoose.Schema({
       required: true,
       lowercase: true
   },
-    bloodType: {
+    blood_type: {
       type: String,
-      enum: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
+      enum: DonorBloodTypes,
       required: true,
     },  // "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"
-    weight: Number,  // in kg
-    address: {
-      type: String,
-      required: true
-    },
-    isEligible: Boolean,
-    lastDonationDate: Date,
-    nextEligibleDate: Date,
+    is_eligible: Boolean,
+    last_donation_date: Date,
+    next_eligible_date: Date,
     
     // Medical history embedded document
-    medicalHistory: {
+    medical_history: {
       hasChronicCondition: Boolean,
       hasInfectiousDisease: Boolean,
       hasRecentSurgery: Boolean,
@@ -47,11 +43,18 @@ const donorSchema = new mongoose.Schema({
       isPregnant: Boolean,
       isTakingMedication: Boolean,
       otherConditions: String,
-      lastUpdated: {
-        type: Date,
-        default: Date.now
-      }
     },
-  }, {timestamps: true});
+    created_at: {
+      type: Date,
+      default: Date.now
+    },
+    updated_at: {
+      type: Date
+    }
+  }, {
+    timestamps:{
+      createdAt: "created_at",
+      updatedAt: "updated_at"
+    }});
 
-export const Donor = mongoose.model('Donor', donorSchema);
+export const DonorModel = mongoose.model('donor', donorSchema);
