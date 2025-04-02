@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 
 import authRoute from './routes/authRoute.js';
+import facilityRoute from './routes/facilityRoute.js';
 import logger from './logger/logger.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { dbConn } from './db/dbConn.js';
@@ -30,6 +31,7 @@ app.use(cors()); // Add this line below the app.use(express.json()) line
 app.use(cookieParser());
 
 app.use('/auth', authRoute);
+app.use('/facilities', facilityRoute);
 
 app.get('/', (req, res) => {
     res.status(200).json({ message: 'Welcome to the HemoBridge API' });

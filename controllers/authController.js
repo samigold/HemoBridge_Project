@@ -14,10 +14,10 @@ import { sendVerificationEmail, sendWelcomeEmail, sendResetPasswordEmail } from 
 // @route   POST /auth/register
 // @access  Public
 export const registerDonor = asyncHandler(async (req, res) => {
-    const { name, email, password, phone, dateOfBirth, gender, bloodType, address } = req.body;
+    const { name, email, password, phone, bloodType, address } = req.body;
 
     // Check if all fields are provided
-    if (!name || !email || !password || !phone || !dateOfBirth || !gender || !bloodType || !address) {
+    if (!name || !email || !password || !phone || !bloodType || !address) {
         res.status(400);
         throw new Error('All fields are required');
     }
@@ -29,59 +29,54 @@ export const registerDonor = asyncHandler(async (req, res) => {
         return;
     }
 
+    //Start transcaction
+    const session = await User.startSession();
+    session.startTransaction();
+
+    try {
     const passwordHash = await bcrypt.hash(password, 12);
     const verificationToken = generateVerificationCode();
     console.log(verificationToken);
 
     // Create new user
-    const user = await User.create({
+    const user = await User.create([{
         name,
         email,
+        phone,
         password: passwordHash,
         role: 'donor',
         verificationToken,
         verificationTokenExpiresAt: Date.now() + 10 * 60 * 1000 // 10 minutes
-    });
-
-    if (user) {
-        await user.save();
+    }], { session});
 
         // Create new donor profile
-        const donor = await Donor.create({
-            userId: user._id,
-            phone,
-            dateOfBirth,
-            gender,
+        const donor = await Donor.create([{
+            userId: user[0]._id,
             bloodType,
+            phone,
             address
-        });
+        }], { session });
 
-        if(!donor){
-            res.status(400).json({ success: false, message: 'Error creating Donor' });
-            throw new Error('Invalid donor data. Error creating Donor');
-        }
-
-        // Generate JWT token and set it in a cookie
-        generateTokenAndSetCookie(res, user._id);
+        // Commit transaction
+        await session.commitTransaction();
+        session.endSession();
 
         // Send email with verification code (if implemented)
         // sendEmail(user.email, verificationToken);
-        await sendVerificationEmail(user.email, verificationToken);
+        await sendVerificationEmail(user[0].email, verificationToken);
 
         // Respond with user data (excluding password)
         res.status(201).json({
             success: true,
-            message: 'Donor successfully',
-            user:{
-                name: user.name,
-                email: user.email,
-                role: user.role,
-            },
-            donor
+            message: 'Donor Registered successfully',
         });
-    } else {
-        res.status(400).json({ success: false, message: 'Error creating Donor' });
-        throw new Error('Invalid user data');
+    } catch (error) {
+        // Rollback transaction in case of error
+        await session.abortTransaction();
+        session.endSession();
+
+
+        res.status(400).json({ success: false, message: 'Error creating Donor: ' + error.message });
     }
 });
 
@@ -114,6 +109,7 @@ export const registerFacility = asyncHandler(async (req, res) => {
     const user = await User.create({
         name: personnelName,
         email,
+        phone,
         password: passwordHash,
         role: 'healthcare_staff',
         verificationToken,
@@ -251,7 +247,7 @@ export const login = asyncHandler(async (req, res) => {
     }
 
     //Check if user exists
-    const user = await User.findOne({email});
+    let user = await User.findOne({email}); 
     if(!user){
         res.status(400);
         throw new Error('Invalid email or password');
@@ -265,6 +261,9 @@ export const login = asyncHandler(async (req, res) => {
         throw new Error('Invalid email or password');
     }
 
+     user = await User.findById(user._id).select('-password');
+     const donor = await Donor.findOne({userId: user._id}).select('-__v -_id -userId -phone -createdAt -updatedAt -medicalHistory');
+
     //jwt token
     generateTokenAndSetCookie(res, user._id);
     user.lastLogin = Date.now();
@@ -273,7 +272,8 @@ export const login = asyncHandler(async (req, res) => {
     res.status(200).json({
         success: true,
         message: `Welcome back ${user.name}`,
-        user
+        user,
+        donor
     });
 })
 
