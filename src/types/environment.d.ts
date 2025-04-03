@@ -8,6 +8,7 @@ declare global {
         MAX_REQUEST_PER_WINDOW:string;
 
         MONGO_URI: string;
+        JWT_SECRET: string;
       }
     }
 }
