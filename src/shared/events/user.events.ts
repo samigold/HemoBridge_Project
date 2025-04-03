@@ -8,6 +8,7 @@ export interface UserCreatedEvent {
     first_name: string;
     last_name: string;
     phone_number: string;
-    blood_type: string;
+    blood_type?: string;
+    address: string;
     role: string;
 }

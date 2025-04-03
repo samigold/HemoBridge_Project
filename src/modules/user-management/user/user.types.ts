@@ -6,6 +6,7 @@ export interface ICreateUser {
     email: string;
     phone_number: string;
     blood_type: string;
+    address: string;
     password: string;
     role: UserRoles;
 }

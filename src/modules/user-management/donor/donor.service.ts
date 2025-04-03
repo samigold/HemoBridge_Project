@@ -5,6 +5,7 @@ import { USER_EVENTS, UserCreatedEvent } from "src/shared/events/user.events";
 
 const DonorService = {
     create: async (userPayload: UserCreatedEvent) => {
+        
         try {
             console.log(`${USER_EVENTS.CREATED} event triggered`);
             console.log(userPayload);
@@ -34,7 +35,13 @@ const DonorService = {
     }
 };
 
-// Listen for the USER_EVENTS.CREATED event
-eventBus.on(USER_EVENTS.CREATED, DonorService.create);
+// Listen for the USER_EVENTS.CREATE,l   D event
+// eventBus.on(USER_EVENTS.CREATED, DonorService.create);
+
+eventBus.on(USER_EVENTS.CREATED, async (userPayload: UserCreatedEvent) => {
+    if (userPayload.role === "donor") { // Process only if the role is "donor"
+        await DonorService.create(userPayload);
+    }
+});
 
 export default DonorService;

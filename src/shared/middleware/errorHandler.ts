@@ -3,7 +3,7 @@ import logger from "src/insfrastructure/logger/logger";
 
 export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
     // console.error(err.stack); // Log the error for debuggin
-    logger.error(err.stack.message)
+    logger.error(err.stack.message); // Log the error message
 
     const statusCode = err.status || 500;
 
