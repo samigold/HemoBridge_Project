@@ -5,6 +5,7 @@ import { UserController } from './user.controller';
 const UserRoutes = express.Router();
 
 UserRoutes.post("/register/donor", UserController.registerDonor);
+UserRoutes.post("/register/admin", UserController.registerAdmin);
 
 // User Management Routes
 // router.get('/users', authorize, checkRole(['admin']), UserController.getAllUsers);  // get all users (admin only)

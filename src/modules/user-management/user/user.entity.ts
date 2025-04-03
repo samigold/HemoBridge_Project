@@ -1,6 +1,6 @@
 import { UserRecord } from "./model/user.record";
 
-interface UserEntity {
+export interface UserEntity {
     id: string;
     phoneNumber: string;
     bloodType: string;

@@ -12,7 +12,7 @@ export const UserController = {
             throw new Error('All fields are required');
         }
 
-        UserService.create({
+        UserService.createDonor({
             first_name: firstName,
             last_name: lastName,
             email,
@@ -25,6 +25,32 @@ export const UserController = {
             res.status(201).json({
                 success: true,
                 message: "Donor created successfully",
+                user: createdUser
+            });
+        }).catch(()=> {
+            throw new Error('Invalid donor data. Error creating Donor');
+        })
+    },
+
+    registerAdmin: (req: Request, res: Response) => {
+
+        const { firstName, lastName, email, password } = req.body;
+
+        if (!firstName || !lastName || !email || !password) {
+            res.status(400);
+            throw new Error('All fields are required');
+        }
+
+        UserService.createAdmin({
+            first_name: firstName,
+            last_name: lastName,
+            email,
+            password
+
+        }).then((createdUser) => {
+            res.status(201).json({
+                success: true,
+                message: "Admin user created successfully",
                 user: createdUser
             });
         }).catch(()=> {
