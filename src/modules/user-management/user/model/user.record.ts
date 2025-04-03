@@ -9,7 +9,6 @@ export interface UserRecord {
     phone_number: string;
     blood_type: string;
     password_hash: string;
-    password: string;
     role: string;
     last_seen: Date;
     created_at: Date;

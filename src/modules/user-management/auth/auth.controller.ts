@@ -1,11 +1,10 @@
 import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import bcrypt from 'bcryptjs';
-import crypto from 'crypto';
-// import { Donor } from '../donor/donor.model.js';
-import { Facility } from '../healthcare-facility/facility.model.js';
-import { UserModel } from '../user/model/user.model.js';
-import { generateTokenAndSetCookie } from 'src/shared/utils/generateTokenAndSetCookie.js';
+import { UserModel } from '../user/model/user.model';
+import { SessionService } from './session/session.service';
+import { PasswordHelper } from 'src/shared/helpers/password.helper';
+import { UserService } from '../user/user.service';
 
 // import { sendVerificationEmail, sendWelcomeEmail, sendResetPasswordEmail } from '../../insfrastructure/mailtrap/emails';
 
@@ -251,25 +250,42 @@ export const AuthController = {
         }
 
         //Check if user exists
-        const user = await UserModel.findOne({email});
+        const user = await UserService.fetchByEmail(email)
+        .catch((error)=> { throw new Error(error.message) })
+
         if(!user){
             res.status(400);
             throw new Error('Invalid email or password');
         }
 
         //Check if password is correct
-        const isPasswordMatch = await bcrypt.compare(password, user.password_hash);
+        const isPasswordMatch = PasswordHelper.verify(password, user.passwordHash!);
 
         if(!isPasswordMatch){
             res.status(400);
             throw new Error('Invalid email or password');
         }
 
-        // jwt token
-        generateTokenAndSetCookie(res, user.id);
-        user.last_seen = new Date();
+        const foundSession = await SessionService.findUserActiveSession(user.id)
+        .catch(()=> { throw new Error()})
 
-        await user.save();
+        if(foundSession) {
+            await SessionService.revokeSession(user.id)
+            .catch(()=> { throw new Error() })
+        }
+
+        const newSession = await SessionService.add(user.id)
+        .catch((error)=> { 
+            console.error("There was an error creating a new session", error);
+            throw new Error("There was error logging in, please try again")
+        })
+
+        if(!newSession) throw new Error('Oops! The email or password entered does not match our record. Please confirm and try again.')
+        
+        delete user.passwordHash;
+            
+        res.cookie('session-id', newSession.accessToken, { httpOnly: true });
+
         res.status(200).json({
             success: true,
             message: `Authentication successful`,
