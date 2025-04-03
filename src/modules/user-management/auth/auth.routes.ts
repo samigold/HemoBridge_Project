@@ -1,4 +1,5 @@
 import express from 'express';
+import { AuthController } from './auth.controller';
 // import AuthController from './auth.controller';
 
 const AuthRoutes = express.Router();
@@ -7,7 +8,7 @@ AuthRoutes.get('/', (req, res) => {
     res.send('Welcome to HemoBridge!');
 });
 
-// AuthRoutes.post('/login', AuthController.login);
+AuthRoutes.post('/login', AuthController.login);
 
 // AuthRoutes.post('/register/donor', AuthController.registerDonor);
 // AuthRoutes.post('/register/facility', AuthController.registerFacility);

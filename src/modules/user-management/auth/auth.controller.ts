@@ -1,11 +1,11 @@
+import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
-
-import { User } from '../user/model/user.model.js';
-import { Donor } from '../donor/donor.model.js';
+// import { Donor } from '../donor/donor.model.js';
 import { Facility } from '../healthcare-facility/facility.model.js';
-import { Request, Response } from 'express';
+import { UserModel } from '../user/model/user.model.js';
+import { generateTokenAndSetCookie } from 'src/shared/utils/generateTokenAndSetCookie.js';
 
 // import { sendVerificationEmail, sendWelcomeEmail, sendResetPasswordEmail } from '../../insfrastructure/mailtrap/emails';
 
@@ -14,10 +14,6 @@ import { Request, Response } from 'express';
 // @access  Public
 
 export const AuthController = {
-    register: ()=> {
-        
-    },
-
     registerDonor: asyncHandler(async (req, res) => {
         // const { name, email, password, phone, dateOfBirth, gender, bloodType, address } = req.body;
 
@@ -247,49 +243,49 @@ export const AuthController = {
     // @route   POST /auth/login
     // @access  Public
     login: asyncHandler(async (req, res) => {
-        // const { email, password } = req.body;
+        const { email, password } = req.body;
 
-        // if(!email || !password){
-        //     res.status(400);
-        //     throw new Error('All fields are required');
-        // }
+        if(!email || !password){
+            res.status(400);
+            throw new Error('All fields are required');
+        }
 
-        // //Check if user exists
-        // const user = await User.findOne({email});
-        // if(!user){
-        //     res.status(400);
-        //     throw new Error('Invalid email or password');
-        // }
+        //Check if user exists
+        const user = await UserModel.findOne({email});
+        if(!user){
+            res.status(400);
+            throw new Error('Invalid email or password');
+        }
 
-        // //Check if password is correct
-        // const isPasswordMatch = await bcrypt.compare(password, user.password);
+        //Check if password is correct
+        const isPasswordMatch = await bcrypt.compare(password, user.password_hash);
 
-        // if(!isPasswordMatch){
-        //     res.status(400);
-        //     throw new Error('Invalid email or password');
-        // }
+        if(!isPasswordMatch){
+            res.status(400);
+            throw new Error('Invalid email or password');
+        }
 
-        //jwt token
-        // generateTokenAndSetCookie(res, user._id);
-        // user.lastLogin = Date.now();
+        // jwt token
+        generateTokenAndSetCookie(res, user.id);
+        user.last_seen = new Date();
 
-        // await user.save();
-        // res.status(200).json({
-        //     success: true,
-        //     message: `Welcome back ${user.name}`,
-        //     user
-        // });
+        await user.save();
+        res.status(200).json({
+            success: true,
+            message: `Authentication successful`,
+            user
+        });
     }),
 
     // @desc    Logout user
     // @route   POST /auth/logout
     // @access  Private
     logout: asyncHandler(async (req, res) => {
-        // res.clearCookie('jwt');
-        // res.status(200).json({
-        //     success: true,
-        //     message: 'Logged out successfully'
-        // });
+        res.clearCookie('jwt');
+        res.status(200).json({
+            success: true,
+            message: 'Logged out successfully'
+        });
     }),
 
     // @desc    Forgot password
