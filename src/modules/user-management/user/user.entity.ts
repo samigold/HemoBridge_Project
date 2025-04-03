@@ -2,8 +2,6 @@ import { UserRecord } from "./model/user.record";
 
 interface UserEntity {
     id: string;
-    firstName: string;
-    lastName: string;
     phoneNumber: string;
     bloodType: string;
     isActive: boolean;
@@ -19,8 +17,6 @@ interface UserEntity {
 export function fromRecordToEntity(record: UserRecord): UserEntity {
     return {
         id: record.id,
-        firstName: record.first_name,
-        lastName: record.last_name,
         phoneNumber: record.phone_number,
         bloodType: record.blood_type,
         isActive: record.is_active,
