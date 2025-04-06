@@ -10,7 +10,6 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon -r dotenv/config ./src",
     "build": "tsc",
-    "postbuild": "echo \"-- dist contents --\" && ls -R dist",
     "start": "node -r module-alias/register dist/src/index.js"
   },
   "author": "Alt_school-Team_16",
