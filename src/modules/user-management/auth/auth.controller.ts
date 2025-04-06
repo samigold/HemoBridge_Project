@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
-import bcrypt from 'bcryptjs';
-import { UserModel } from '../user/model/user.model';
 import { SessionService } from './session/session.service';
 import { PasswordHelper } from 'src/shared/helpers/password.helper';
 import { UserService } from '../user/user.service';

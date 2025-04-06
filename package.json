@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon -r dotenv/config ./src",
     "build": "tsc",
-    "start": "node -r module-alias/register dist/src"
+    "start": "node -r module-alias/register dist/src/index.js"
   },
   "author": "Alt_school-Team_16",
   "license": "ISC",
@@ -23,6 +23,7 @@
     "mailtrap": "^4.0.0",
     "module-alias": "^2.2.3",
     "mongoose": "^8.12.1",
+    "typescript-transform-paths": "^3.5.5",
     "winston": "^3.17.0"
   },
   "devDependencies": {
