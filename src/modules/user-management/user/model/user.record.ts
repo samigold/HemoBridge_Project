@@ -14,10 +14,3 @@ export interface UserRecord {
     created_at: Date;
     updated_at: Date;
 }
-
-export enum UserRoles {
-    DONOR = "donor",
-    CARE_GIVER = "care_giver",
-    STAFF = "staff",
-    ADMIN = "admin"
-}
