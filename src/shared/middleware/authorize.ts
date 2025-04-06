@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { SessionService } from "src/services/user/auth/session/session.service";
+import { AuthHelper } from "src/modules/user-management/auth/helpers/auth.helper";
+import { SessionService } from "src/modules/user-management/auth/session/session.service";
+import { UserService } from "src/modules/user-management/user/user.service";
 import { NotAuthenticatedError } from "../errors";
-import { UserService } from "src/services/user/base/user.service";
-import { AuthHelper } from "src/services/user/auth/helpers/auth.helper";
 
-export const validateSession = (sessionService: SessionService, userService: UserService) => {
+export const validateSession = () => {
   return async (req: Request, res: Response, next: NextFunction) => {
     
     let sessionId = req.headers.cookie;
@@ -22,11 +22,11 @@ export const validateSession = (sessionService: SessionService, userService: Use
     }
 
     // verify the token, check if it is a valid token and it is not expired
-    const result = await AuthHelper.verifyToken(sessionId, sessionService.ACCESS_TOKEN_SECRET)
+    const result = await AuthHelper.verifyToken(sessionId, SessionService.ACCESS_TOKEN_SECRET)
     .catch(()=> { throw new NotAuthenticatedError("Session is revoked. Please log in again.") })
 
     // check which session this token belongs to
-    const foundSession = await sessionService.findSessionByAccessToken(sessionId as string)
+    const foundSession = await SessionService.findSessionByAccessToken(sessionId as string)
     .catch(()=> { throw new NotAuthenticatedError("Session is revoked. Please log in again")  })
 
     // check if it is an active session
@@ -42,7 +42,7 @@ export const validateSession = (sessionService: SessionService, userService: Use
     }
 
     // if the user id matches, retrieve the user details
-    const user = await userService.retrieveUserById(foundSession.userId)
+    const user = await UserService.fetchById(foundSession.userId)
     .catch(()=> { throw new NotAuthenticatedError("Session is revoked. Please log in again")  })
     
     // return an error if the user is not longer in the database
