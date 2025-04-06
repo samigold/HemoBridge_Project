@@ -19,7 +19,7 @@ export interface AdminUserCreatedEvent {
     email: string;
     first_name: string;
     last_name: string;
-    role: string;
+    role: UserRoles.ADMIN;
 }
 
 export interface CareGiverUserCreatedEvent {
@@ -28,5 +28,5 @@ export interface CareGiverUserCreatedEvent {
     last_name: string;
     phone_number: string;
     address: string;
-    role: string;
+    role: UserRoles.CARE_GIVER;
 }

@@ -16,25 +16,6 @@ export const UserService = {
         return UserEntity.fromRecordToEntity(userRecord)
     },
 
-    create: async (newUser: ICreateUser): Promise<UserEntity> => {
-        
-        // TODO: hash password
-        const passwordHash = PasswordHelper.hash(newUser.password);
-
-        const createdUserRecord = await UserModel.create({
-            email: newUser.email,
-            phone_number: newUser.phone_number,
-            password_hash: passwordHash,
-            role: newUser.role
-        }).catch((error)=> {
-            console.log(error)
-            // logger.error("There was an error creating a new user");
-            throw error
-        })
-        
-        return UserEntity.fromRecordToEntity(createdUserRecord);
-    },
-
     // createAdmin: async (newUser: ICreateAdminUser)=> {
         
     //     const passwordHash = PasswordHelper.hash(newUser.password);
@@ -73,5 +54,25 @@ export const UserService = {
         if(!userRecord) throw new Error("User not found");
 
         return UserEntity.fromRecordToEntity(userRecord)
-    }
+    },
+
+    create: async (newUser: ICreateUser): Promise<UserEntity> => {
+        
+        // TODO: hash password
+        const passwordHash = PasswordHelper.hash(newUser.password);
+
+        const createdUserRecord = await UserModel.create({
+            email: newUser.email,
+            phone_number: newUser.phone_number,
+            password_hash: passwordHash,
+            role: newUser.role
+
+        }).catch((error)=> {
+            console.error(error)
+            // logger.error("There was an error creating a new user");
+            throw error
+        })
+        
+        return UserEntity.fromRecordToEntity(createdUserRecord);
+    },
 }

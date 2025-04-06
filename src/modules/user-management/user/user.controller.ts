@@ -30,6 +30,7 @@ export const UserController = {
             last_name: lastName,
             blood_type: bloodType,
             address: address,
+            phone_number: phoneNumber,
             role: UserRoles.DONOR,
         });
         
@@ -39,6 +40,40 @@ export const UserController = {
             success: true,
             message: "New donor user created successfully",
             user: createdUserEntity
+        });
+    },
+
+    registerCareGiver: async (req: Request, res: Response) => {
+
+        const { firstName, lastName, email, password, phoneNumber, address } = req.body;
+
+        if (!firstName || !lastName || !email || !password || !phoneNumber || !address) {
+            res.status(400);
+            throw new Error('All fields are required');
+        }
+
+        const createdUserEntity = await UserService.create({
+            email,
+            password,
+            phone_number: phoneNumber,
+            role: UserRoles.CARE_GIVER
+        })
+        .catch(()=> {
+            throw new Error('Invalid caregiver data. Error creating caregiver');
+        })
+
+        eventBus.emit(USER_EVENTS.CREATED, {
+            user_id: createdUserEntity.id,
+            first_name: firstName,
+            last_name: lastName,
+            phone_number: phoneNumber,
+            address: address,
+            role: UserRoles.CARE_GIVER,
+        });
+
+        res.status(201).json({
+            success: true,
+            message: "New care giver user created successfully"
         });
     },
 

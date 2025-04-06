@@ -7,11 +7,8 @@ const DonorService = {
     create: async (userPayload: DonorUserCreatedEvent) => {
         
         try {
-            console.log(`${USER_EVENTS.CREATED} event triggered`);
-            console.log(userPayload);
-
             // Extract user details from the payload
-            const { user_id, first_name, last_name, phone_number ,blood_type } = userPayload;
+            const { user_id, first_name, last_name, phone_number, blood_type } = userPayload;
 
 
             // Create a new donor record
@@ -39,7 +36,7 @@ const DonorService = {
 
 eventBus.on(USER_EVENTS.CREATED, async (userPayload: DonorUserCreatedEvent) => {
     if (userPayload.role === "donor") { // Process only if the role is "donor"
-        await DonorService.create(userPayload);
+        await DonorService.create(userPayload)
     }
 });
 
