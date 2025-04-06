@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import cors from 'cors'; // Import the cors package
 import BaseRouter from './modules/main.routes';
-import logger from './insfrastructure/logger/logger';
+// import logger from './insfrastructure/logger/logger';
 import { dbConn } from './insfrastructure/db/dbConn';
 import "src/shared/events/event.listeners";
 import { errorHandler } from './shared/middleware/errorHandler';
@@ -27,5 +27,5 @@ app.use('', BaseRouter);
 app.use(errorHandler)
 
 app.listen(Number(process.env.PORT) || 8000, process.env.HOST, () => {
-    logger.info(`Server running on http://${process.env.HOST}:${process.env.PORT}`);
+    console.log(`Server running on http://${process.env.HOST}:${process.env.PORT}`);
 });

@@ -1,12 +1,13 @@
 import { UserRoles } from "./model/user.record";
 
 export interface ICreateUser {
-    first_name: string;
-    last_name: string;
     email: string;
-    phone_number: string;
-    blood_type: string;
-    address: string;
+    phone_number?: string;
     password: string;
     role: UserRoles;
 }
+
+// export interface ICreateAdminUser {
+//     email: string;
+//     password: string;
+// }

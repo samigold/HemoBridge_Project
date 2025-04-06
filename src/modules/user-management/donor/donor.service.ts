@@ -1,23 +1,22 @@
 import { DonorModel } from "./donor.model";
 import logger from "src/insfrastructure/logger/logger";
 import eventBus from "src/shared/events/event-bus";
-import { USER_EVENTS, UserCreatedEvent } from "src/shared/events/user.events";
+import { DonorUserCreatedEvent, USER_EVENTS } from "src/shared/events/user.events";
 
 const DonorService = {
-    create: async (userPayload: UserCreatedEvent) => {
+    create: async (userPayload: DonorUserCreatedEvent) => {
         
         try {
             console.log(`${USER_EVENTS.CREATED} event triggered`);
             console.log(userPayload);
 
             // Extract user details from the payload
-            const { user_id, email, first_name, last_name, phone_number ,blood_type } = userPayload;
+            const { user_id, first_name, last_name, phone_number ,blood_type } = userPayload;
 
 
             // Create a new donor record
             const donor = await DonorModel.create({
                 id: user_id,
-                email: email,
                 first_name: first_name,
                 last_name: last_name,
                 phone_number: phone_number,
@@ -28,9 +27,9 @@ const DonorService = {
                 medical_history: {} // Default value
             });
 
-            logger.info(`Donor created successfully: ${donor._id}`);
+            console.info(`Donor created successfully: ${donor._id}`);
         } catch (error) {
-            logger.error("Error creating donor:", error);
+            console.error("Error creating donor:", error);
         }
     }
 };
@@ -38,7 +37,7 @@ const DonorService = {
 // Listen for the USER_EVENTS.CREATE,l   D event
 // eventBus.on(USER_EVENTS.CREATED, DonorService.create);
 
-eventBus.on(USER_EVENTS.CREATED, async (userPayload: UserCreatedEvent) => {
+eventBus.on(USER_EVENTS.CREATED, async (userPayload: DonorUserCreatedEvent) => {
     if (userPayload.role === "donor") { // Process only if the role is "donor"
         await DonorService.create(userPayload);
     }

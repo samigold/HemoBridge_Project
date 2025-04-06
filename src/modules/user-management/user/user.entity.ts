@@ -1,33 +1,29 @@
 import { UserRecord } from "./model/user.record";
 
-interface UserEntity {
+export interface UserEntity {
     id: string;
-    firstName: string;
-    lastName: string;
-    phoneNumber: string;
-    bloodType: string;
     isActive: boolean;
     isSuspended: boolean;
     email: string;
+    passwordHash?: string;
     role: string;
-    createdAt?: Date;
-    updatedAt?: Date;
+    createdAt: Date;
+    updatedAt: Date;
+    lastSeen: Date;
 }
 
-
-
-export function fromRecordToEntity(record: UserRecord): UserEntity {
-    return {
-        id: record.id,
-        firstName: record.first_name,
-        lastName: record.last_name,
-        phoneNumber: record.phone_number,
-        bloodType: record.blood_type,
-        isActive: record.is_active,
-        isSuspended: record.is_suspended,
-        email: record.email,
-        role: record.role,
-        createdAt: record.created_at,
-        updatedAt: record.updated_at
-    };
+export const UserEntity = {
+    fromRecordToEntity(record: UserRecord): UserEntity {
+        return {
+            id: record.id,
+            isActive: record.is_active,
+            isSuspended: record.is_suspended,
+            email: record.email,
+            passwordHash: record.password_hash,
+            role: record.role,
+            createdAt: record.created_at,
+            updatedAt: record.updated_at,
+            lastSeen: record.last_seen
+        };
+    }
 }

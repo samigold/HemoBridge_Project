@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
 import { UserService } from "./user.service";
 import { UserRoles } from "./model/user.record";
+import eventBus from "src/shared/events/event-bus";
+import { USER_EVENTS } from "src/shared/events/user.events";
 
 export const UserController = {
-    registerDonor: (req: Request, res: Response) => {
+    registerDonor: async (req: Request, res: Response) => {
 
         const { firstName, lastName, email, password, phoneNumber, bloodType, address } = req.body;
 
@@ -12,56 +14,90 @@ export const UserController = {
             throw new Error('All fields are required');
         }
 
-        UserService.create({
-            first_name: firstName,
-            last_name: lastName,
+        const createdUserEntity = await UserService.create({
             email,
             password,
-            address: address,
             phone_number: phoneNumber,
-            blood_type: bloodType,
             role: UserRoles.DONOR
 
-        }).then((createdUser) => {
-            res.status(201).json({
-                success: true,
-                message: "Donor created successfully",
-                user: createdUser
-            });
         }).catch(()=> {
             throw new Error('Invalid donor data. Error creating Donor');
         })
+
+        eventBus.emit(USER_EVENTS.CREATED, {
+            user_id: createdUserEntity.id,
+            first_name: firstName,
+            last_name: lastName,
+            blood_type: bloodType,
+            address: address,
+            role: UserRoles.DONOR,
+        });
+        
+        delete createdUserEntity.passwordHash
+        
+        res.status(201).json({
+            success: true,
+            message: "New donor user created successfully",
+            user: createdUserEntity
+        });
     },
 
-    registerCareGiver: (req: Request, res: Response) => {
+    registerAdmin: async (req: Request, res: Response) => {
 
-        const { firstName, lastName, email, password, phone, address } = req.body;
-        console.log("caregiver", req.body);
-        if (!firstName || !lastName || !email || !password || !phone || !address) {
+        const { firstName, lastName, email, password } = req.body;
+
+        if (!firstName || !lastName || !email || !password) {
             res.status(400);
             throw new Error('All fields are required');
         }
 
-        UserService.create({
-            first_name: firstName,
-            last_name: lastName,
+        const createdUserEntity = await UserService.create({
             email,
             password,
-            address,
-            phone_number: phone,
-            blood_type: " ", // Assuming blood type is not required for caregivers
-            role: UserRoles.CARE_GIVER
-        }).then((createdUser) => {
-            res.status(201).json({
-                success: true,
-                message: "Caregiver created successfully",
-                user: createdUser
-            });
+            role: UserRoles.DONOR
+
+        }).catch(()=> {
+            throw new Error('Invalid donor data. Error creating Donor');
         })
-        .catch(()=> {
-            throw new Error('Invalid caregiver data. Error creating caregiver');
-        })
+
+        eventBus.emit(USER_EVENTS.CREATED, {
+            user_id: createdUserEntity.id,
+            email: createdUserEntity.id,
+            first_name: createdUserEntity.id,
+            last_name: createdUserEntity.id,
+            role: UserRoles.ADMIN,
+        });
+        
+        delete createdUserEntity.passwordHash
+        
+        res.status(201).json({
+            success: true,
+            message: "New admin user created successfully",
+            user: createdUserEntity
+        });
     },
+
+    // registerCareGiver: (req: Request, res: Response) => {
+
+    //     const { firstName, lastName, email, password, phone, address } = req.body;
+    //     console.log("caregiver", req.body);
+    //     if (!firstName || !lastName || !email || !password || !phone || !address) {
+    //         res.status(400);
+    //         throw new Error('All fields are required');
+    //     }
+
+    //     UserService.create({
+    //         first_name,
+    //         last_name,
+    //         email,
+    //         password,
+    //         phone_number: phone,
+    //         role: UserRoles.CARE_GIVER
+    //     })
+    //     .catch((error)=> {
+    //         throw new Error('Invalid caregiver data. Error creating caregiver');
+    //     })
+    // },
 
     // registerStaff: (req: Request, res: Response) => {
 
