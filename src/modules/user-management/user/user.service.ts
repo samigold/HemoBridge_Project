@@ -1,13 +1,21 @@
 import { UserModel } from "./model/user.model";
-// import logger from "src/insfrastructure/logger/logger";
 import { ICreateUser } from "./user.types";
 import { UserEntity } from "./user.entity";
-import eventBus from "src/shared/events/event-bus";
-import { USER_EVENTS } from "src/shared/events/user.events";
 import { PasswordHelper } from "src/shared/helpers/password.helper";
-import { UserRoles } from "./model/user.record";
 
 export const UserService = {
+    fetchById: async (id:string)=> {
+        const userRecord = await UserModel.findOne({ _id: id })
+        .catch((error)=> { 
+            console.log("There was an error fetching user by email: ", error);
+            throw new Error(error) 
+        })
+
+        if(!userRecord) throw new Error("User not found");
+
+        return UserEntity.fromRecordToEntity(userRecord)
+    },
+
     create: async (newUser: ICreateUser): Promise<UserEntity> => {
         
         // TODO: hash password
