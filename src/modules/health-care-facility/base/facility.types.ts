@@ -1,4 +1,4 @@
-export interface ICreateHealthCareFacility {
+export interface ICreateFacility {
     name: string;
     address: string;
     email: string;

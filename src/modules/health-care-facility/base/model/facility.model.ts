@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-import { HealthCareFacilityRecord } from './health-care-facility.record';
+import { FacilityRecord } from './facility.record';
 
-const HealthCareFacilitySchema = new mongoose.Schema<HealthCareFacilityRecord>({
+const FacilitySchema = new mongoose.Schema<FacilityRecord>({
     name: {
         type: String,
         required: true
@@ -38,4 +38,4 @@ const HealthCareFacilitySchema = new mongoose.Schema<HealthCareFacilityRecord>({
         updatedAt: "updated_at"
     }
 })
-export const HealthCareFacilityModel = mongoose.model('health-care-facilities', HealthCareFacilitySchema);
+export const FacilityModel = mongoose.model('health-care-facilities', FacilitySchema);

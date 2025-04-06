@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { HealthCareFacilityService } from "./health-care-facility.service";
+import { FacilityService } from "./facility.service";
 import { ValidationError } from "src/shared/errors";
 
-export const HealthCareFacilityController = {
+export const FacilityController = {
     create: async(req: Request, res: Response)=> {
 
         const { name, address, email, phoneNumber, operationalHours } = req.body;
@@ -11,7 +11,7 @@ export const HealthCareFacilityController = {
             throw new ValidationError("All fields are required");
         }
 
-        const createdFacilityRecord = await HealthCareFacilityService.create({
+        const createdFacilityRecord = await FacilityService.create({
             name,
             address,
             email,

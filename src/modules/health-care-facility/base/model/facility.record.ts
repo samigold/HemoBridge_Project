@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-export interface HealthCareFacilityRecord {
+export interface FacilityRecord {
     _id?: Types.ObjectId;
     id: string;
     name: string;
