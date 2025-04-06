@@ -1,5 +1,5 @@
 import { UserModel } from "./model/user.model";
-import logger from "src/insfrastructure/logger/logger";
+// import logger from "src/insfrastructure/logger/logger";
 import { ICreateUser } from "./user.types";
 import { UserEntity } from "./user.entity";
 import eventBus from "src/shared/events/event-bus";

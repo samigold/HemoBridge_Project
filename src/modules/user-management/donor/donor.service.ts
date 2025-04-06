@@ -1,5 +1,5 @@
 import { DonorModel } from "./donor.model";
-import logger from "src/insfrastructure/logger/logger";
+// import logger from "src/insfrastructure/logger/logger";
 import eventBus from "src/shared/events/event-bus";
 import { DonorUserCreatedEvent, USER_EVENTS } from "src/shared/events/user.events";
 
