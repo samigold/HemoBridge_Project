@@ -126,7 +126,7 @@ export const UserController = {
         const createdUserEntity = await UserService.create({
             email,
             password,
-            role: UserRoles.DONOR
+            role: USER_ROLE.DONOR
 
         }).catch(()=> {
             throw new Error('Invalid donor data. Error creating Donor');
@@ -137,7 +137,7 @@ export const UserController = {
             email: createdUserEntity.id,
             first_name: createdUserEntity.id,
             last_name: createdUserEntity.id,
-            role: UserRoles.ADMIN,
+            role: USER_ROLE.ADMIN,
         });
         
         delete createdUserEntity.passwordHash
