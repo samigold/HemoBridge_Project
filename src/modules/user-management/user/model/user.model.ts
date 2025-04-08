@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
-import { UserRecord, UserRoles } from './user.record';
+import { UserRecord } from './user.record';
+import { USER_ROLE as UserRoles } from 'src/shared/constants/user-role.enum';
 
 const userSchema = new mongoose.Schema<UserRecord>({
     // users collection schema

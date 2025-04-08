@@ -1,4 +1,4 @@
-import { UserRoles } from "src/modules/user-management/user/model/user.record";
+import { USER_ROLE as UserRoles } from 'src/shared/constants/user-role.enum';
 
 export enum USER_EVENTS {
     CREATED = "user_created"
