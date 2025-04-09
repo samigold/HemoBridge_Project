@@ -3,6 +3,7 @@ import { UserService } from "./user.service";
 import eventBus from "src/shared/events/event-bus";
 import { USER_EVENTS } from "src/shared/events/user.events";
 import { USER_ROLE } from "src/shared/constants/user-role.enum";
+import { ValidationError } from "src/shared/errors";
 
 export const UserController = {
     registerDonor: async (req: Request, res: Response) => {
@@ -10,8 +11,7 @@ export const UserController = {
         const { firstName, lastName, email, password, phoneNumber, bloodType, address } = req.body;
 
         if (!firstName || !lastName || !email || !password || !phoneNumber || !bloodType || !address) {
-            res.status(400);
-            throw new Error('All fields are required');
+            throw new ValidationError('All fields are required');
         }
 
         const createdUserEntity = await UserService.create({
@@ -48,8 +48,7 @@ export const UserController = {
         const { firstName, lastName, email, password, phoneNumber, address } = req.body;
 
         if (!firstName || !lastName || !email || !password || !phoneNumber || !address) {
-            res.status(400);
-            throw new Error('All fields are required');
+            throw new ValidationError('All fields are required');
         }
 
         const createdUserEntity = await UserService.create({
@@ -82,8 +81,7 @@ export const UserController = {
         const { facilityId, firstName, lastName, email, password, phoneNumber, address } = req.body;
 
         if (!facilityId || !firstName || !lastName || !email || !password || !phoneNumber || !address) {
-            res.status(400);
-            throw new Error('All fields are required');
+            throw new ValidationError('All fields are required');
         }
 
         const createdUserEntity = await UserService.create({
@@ -147,71 +145,6 @@ export const UserController = {
             message: "New admin user created successfully",
             user: createdUserEntity
         });
-    },
-
-    // registerCareGiver: (req: Request, res: Response) => {
-
-    //     const { firstName, lastName, email, password, phone, address } = req.body;
-    //     console.log("caregiver", req.body);
-    //     if (!firstName || !lastName || !email || !password || !phone || !address) {
-    //         res.status(400);
-    //         throw new Error('All fields are required');
-    //     }
-
-    //     UserService.create({
-    //         first_name,
-    //         last_name,
-    //         email,
-    //         password,
-    //         phone_number: phone,
-    //         role: UserRoles.CARE_GIVER
-    //     })
-    //     .catch((error)=> {
-    //         throw new Error('Invalid caregiver data. Error creating caregiver');
-    //     })
-    // },
-
-    // registerStaff: (req: Request, res: Response) => {
-
-    //     const { first_name, last_name, email, password, phone, dateOfBirth, gender, bloodType, address } = req.body;
-
-    //     if (!first_name || !last_name || !email || !password || !phone || !dateOfBirth || !gender || !bloodType || !address) {
-    //         res.status(400);
-    //         throw new Error('All fields are required');
-    //     }
-
-    //     UserService.create({
-    //         first_name,
-    //         last_name,
-    //         email,
-    //         password,
-    //         phone_number: phone,
-    //         role: UserRoles.CARE_GIVER
-    //     })
-    //     .catch((error)=> {
-    //         throw new Error('Invalid caregiver data. Error creating caregiver');
-    //     })
-    // },
-
-    // registerAdmin: (req: Request, res: Response) => {
-
-    //     const { first_name, last_name, email, password, phone, dateOfBirth, gender, bloodType, address } = req.body;
-
-    //     if (!first_name || !last_name || !email || !password || !phone || !dateOfBirth || !gender || !bloodType || !address) {
-    //         res.status(400);
-    //         throw new Error('All fields are required');
-    //     }
-
-    //     UserService.create({
-    //         first_name,
-    //         last_name,
-    //         email,
-    //         password,
-    //         role: UserRoles.CARE_GIVER
-    //     })
-    //     .catch((error)=> {
-    //         throw new Error('Invalid caregiver data. Error creating caregiver');
-    //     })
-    // }
+    }
 }
 
