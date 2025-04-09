@@ -1,29 +1,23 @@
-import { FacilityRecord } from "../base/model/facility.record";
+import { FacilityStaffRecord } from "./model/facility-staff.record";
 
-export interface FacilityEntity {
+export interface FacilityStaffEntity {
     id: string;
-    name: string;
+    userId: string;
+    facilityId: string;
     address: string;
-    contactInfo: {
-        email: string;
-        phoneNumber: string;
-    };
-    operationalHours: string;
+    phoneNumber: string;
     createdAt: Date;
     updatedAt: Date;
 }
 
-export const FacilityEntity = {
-    fromRecordToEntity(record: FacilityRecord): FacilityEntity {
+export const FacilityStaffEntity = {
+    fromRecordToEntity(record: FacilityStaffRecord): FacilityStaffEntity {
         return {
             id: record.id,
-            name: record.name,
             address: record.address,
-            contactInfo: {
-                email: record.contact_info.email,
-                phoneNumber: record.contact_info.phone_number
-            },
-            operationalHours: record.operational_hours,
+            userId: record.user_id,
+            facilityId: record.facility_id,
+            phoneNumber: record.phone_number,
             createdAt: record.created_at,
             updatedAt: record.updated_at
         };

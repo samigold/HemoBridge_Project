@@ -1,4 +1,5 @@
-import { FacilityEntity } from "./facility-staff.entity";
+import { NotFoundError } from "src/shared/errors";
+import { FacilityStaffEntity } from "./facility-staff.entity";
 import { ICreateFacility } from "./facility-staff.types";
 import { FacilityStaffModel } from "./model/facility-staff.model";
 
@@ -18,6 +19,8 @@ export const FacilityStaffService = {
             throw error
         })
 
-        return FacilityEntity.fromRecordToEntity(createdFacilityRecord);
+        if(!createdFacilityRecord) throw new NotFoundError("Facility record not created successfully");
+
+        return FacilityStaffEntity.fromRecordToEntity(createdFacilityRecord);
     }
 }
