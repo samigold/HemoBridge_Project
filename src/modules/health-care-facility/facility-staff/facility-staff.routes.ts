@@ -8,7 +8,7 @@ import { FacilityStaffController } from './facility-staff.controller';
 
 const FacilityStaffRoutes = express.Router();
 
-FacilityStaffRoutes.post("/", validateSession, validateAccess(USER_ROLE.ADMIN), FacilityStaffController.create);
+// FacilityStaffRoutes.post("/", validateSession, validateAccess(USER_ROLE.ADMIN), FacilityStaffController.create);
 
 applyAsyncHandler(FacilityStaffRoutes);
 export default FacilityStaffRoutes;

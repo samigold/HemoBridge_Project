@@ -32,11 +32,12 @@ export interface CareGiverUserCreatedEvent {
 }
 
 export interface FacilityStaffUserCreatedEvent {
+    facility_id: string;
     user_id: string;
     first_name: string;
     last_name: string;
     phone_number: string;
     address: string;
     email: string;
-    role: USER_ROLE.CARE_GIVER;
+    role: USER_ROLE.FACILITY_STAFF;
 }

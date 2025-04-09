@@ -1,7 +1,8 @@
 export interface ICreateFacility {
-    name: string;
+    user_id: string;
+    facility_id: string;
+    first_name: string;
+    last_name: string;
+    phone_number: string;
     address: string;
-    email: string;
-    phoneNumber: string;
-    operationalHours: string;
 }
