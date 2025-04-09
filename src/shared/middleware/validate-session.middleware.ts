@@ -4,8 +4,7 @@ import { SessionService } from "src/modules/user-management/auth/session/session
 import { UserService } from "src/modules/user-management/user/user.service";
 import { NotAuthenticatedError } from "../errors";
 
-export const validateSession = () => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+export const validateSession = async (req: Request, res: Response, next: NextFunction) => {
     
     let sessionId = req.headers.cookie;
 
@@ -56,4 +55,4 @@ export const validateSession = () => {
     req.user = user;
     next();
   };
-};
+

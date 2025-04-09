@@ -1,11 +1,8 @@
 import express from 'express';
-import { HealthCareFacilityController } from './health-care-facility.controller';
-import { validateSession } from 'src/shared/middleware/validate-session.middleware';
-import { validateAccess } from 'src/shared/middleware/access.middleware';
-import { USER_ROLE } from 'src/shared/constants/user-role.enum';
+import FacilityRoutes from './base/facility.routes';
 
-const HealthCareFacilityRoutes = express.Router();
+const HealthCareFacilityRouter = express.Router();
 
-HealthCareFacilityRoutes.post("/", validateSession(), validateAccess(USER_ROLE.ADMIN), HealthCareFacilityController.create);
+HealthCareFacilityRouter.use('/facility', FacilityRoutes);
 
-export default HealthCareFacilityRoutes;
+export default HealthCareFacilityRouter;

@@ -1,6 +1,6 @@
-import { HealthCareFacilityRecord } from "./model/health-care-facility.record";
+import { FacilityRecord } from "./model/facility-staff.record";
 
-export interface HealthCareFacilityEntity {
+export interface FacilityEntity {
     id: string;
     name: string;
     address: string;
@@ -13,8 +13,8 @@ export interface HealthCareFacilityEntity {
     updatedAt: Date;
 }
 
-export const HealthCareFacilityEntity = {
-    fromRecordToEntity(record: HealthCareFacilityRecord): HealthCareFacilityEntity {
+export const FacilityEntity = {
+    fromRecordToEntity(record: FacilityRecord): FacilityEntity {
         return {
             id: record.id,
             name: record.name,

@@ -1,4 +1,4 @@
-import { UserRoles } from "src/modules/user-management/user/model/user.record";
+import { USER_ROLE } from "../constants/user-role.enum";
 
 export enum USER_EVENTS {
     CREATED = "user_created"
@@ -11,7 +11,7 @@ export interface DonorUserCreatedEvent {
     blood_type: string;
     phone_number: string;
     address: string;
-    role: UserRoles.DONOR;
+    role: USER_ROLE.DONOR;
 }
 
 export interface AdminUserCreatedEvent {
@@ -19,7 +19,7 @@ export interface AdminUserCreatedEvent {
     email: string;
     first_name: string;
     last_name: string;
-    role: UserRoles.ADMIN;
+    role: USER_ROLE.ADMIN;
 }
 
 export interface CareGiverUserCreatedEvent {
@@ -28,5 +28,15 @@ export interface CareGiverUserCreatedEvent {
     last_name: string;
     phone_number: string;
     address: string;
-    role: UserRoles.CARE_GIVER;
+    role: USER_ROLE.CARE_GIVER;
+}
+
+export interface FacilityStaffUserCreatedEvent {
+    user_id: string;
+    first_name: string;
+    last_name: string;
+    phone_number: string;
+    address: string;
+    email: string;
+    role: USER_ROLE.CARE_GIVER;
 }

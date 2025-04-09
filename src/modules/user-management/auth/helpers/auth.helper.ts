@@ -9,6 +9,7 @@ export const AuthHelper = {
       return jwt.verify(token, secret);
 
     } catch (error) {
+      console.log(error)
       throw error
     }
   },

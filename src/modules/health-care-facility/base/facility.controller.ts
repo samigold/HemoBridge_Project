@@ -28,5 +28,41 @@ export const FacilityController = {
             message: "New health care facility created successfully",
             data: createdFacilityRecord
         });
+    },
+
+    fetch: async(req: Request, res: Response)=> {
+
+        const { page } =  req.params;
+        if(!page || isNaN(Number(page))) throw new ValidationError("Page number is required to fetch this list");
+
+        const foundPaginatedResults = await FacilityService.findPaginated(Number(page))
+        .catch((error)=> {
+            console.error("There was an error fetching health care facility list: ", error);
+            throw error
+        })
+
+        res.status(201).json({
+            success: true,
+            message: "Health care facilities retrieved successfully",
+            data: foundPaginatedResults
+        });
+    },
+
+    fetchById: async(req: Request, res: Response)=> {
+        
+        const { id } = req.params;
+        if(!id) throw new ValidationError("");
+
+        const foundPaginatedResults = await FacilityService.findById(id)
+        .catch((error)=> {
+            console.error("There was an error finding health care facility by id: ", error);
+            throw error
+        })
+
+        res.status(201).json({
+            success: true,
+            message: "Health care facilities retrieved successfully",
+            data: foundPaginatedResults
+        });
     }
 }
