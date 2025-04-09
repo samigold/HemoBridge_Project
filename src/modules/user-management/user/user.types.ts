@@ -1,4 +1,5 @@
-import { UserRoles } from "./model/user.record";
+import { USER_ROLE as UserRoles } from 'src/shared/constants/user-role.enum';
+
 
 export interface ICreateUser {
     email: string;
