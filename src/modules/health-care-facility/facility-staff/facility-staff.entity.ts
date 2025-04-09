@@ -1,4 +1,4 @@
-import { FacilityRecord } from "./model/facility-staff.record";
+import { FacilityRecord } from "../base/model/facility.record";
 
 export interface FacilityEntity {
     id: string;
