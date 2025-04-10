@@ -38,4 +38,4 @@ const FacilitySchema = new mongoose.Schema<FacilityRecord>({
         updatedAt: "updated_at"
     }
 })
-export const FacilityModel = mongoose.model('health-care-facilities', FacilitySchema);
+export const FacilityModel = mongoose.model('health_care_facilities', FacilitySchema);

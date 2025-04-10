@@ -2,6 +2,7 @@ import { UserModel } from "./model/user.model";
 import { ICreateUser } from "./user.types";
 import { UserEntity } from "./user.entity";
 import { PasswordHelper } from "src/shared/helpers/password.helper";
+import { NotFoundError } from "src/shared/errors";
 
 export const UserService = {
     fetchById: async (id:string)=> {
@@ -51,7 +52,7 @@ export const UserService = {
             throw new Error(error) 
         })
 
-        if(!userRecord) throw new Error("User not found");
+        if(!userRecord) return userRecord
 
         return UserEntity.fromRecordToEntity(userRecord)
     },

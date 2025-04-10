@@ -1,7 +1,9 @@
+import { NotFoundError } from "src/shared/errors";
 import { CareGiverModel } from "./caregiver.model";
 // import logger from "src/insfrastructure/logger/logger";
 import eventBus from "src/shared/events/event-bus";
 import { CareGiverUserCreatedEvent, USER_EVENTS } from "src/shared/events/user.events";
+import { CareGiverEntity } from "./care-giver.entity";
 
 const CareGiverService = {
     create: async (userPayload: CareGiverUserCreatedEvent) => {
@@ -24,6 +26,15 @@ const CareGiverService = {
         } catch (error) {
             console.error("Error creating caregiver:", error);
         }
+    },
+
+    getByUserId: async (id:string)=> {
+        const result = await CareGiverModel.findOne({ user_id: id })
+        .catch((error)=> { throw error })
+
+        if(!result) throw new NotFoundError("Care giver not found");
+
+        return CareGiverEntity.fromRecordToEntity(result);
     }
 };
 

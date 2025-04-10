@@ -1,3 +1,4 @@
+import { USER_ROLE } from "src/shared/constants/user-role.enum";
 import { UserRecord } from "./model/user.record";
 
 export interface UserEntity {
@@ -6,7 +7,7 @@ export interface UserEntity {
     isSuspended: boolean;
     email: string;
     passwordHash?: string;
-    role: string;
+    role: USER_ROLE;
     createdAt: Date;
     updatedAt: Date;
     lastSeen: Date;

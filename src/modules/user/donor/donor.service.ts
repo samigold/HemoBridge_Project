@@ -2,6 +2,9 @@ import { DonorModel } from "./donor.model";
 // import logger from "src/insfrastructure/logger/logger";
 import eventBus from "src/shared/events/event-bus";
 import { DonorUserCreatedEvent, USER_EVENTS } from "src/shared/events/user.events";
+import { DonorEntity } from "./donor.entity";
+import { resourceLimits } from "worker_threads";
+import { NotFoundError } from "src/shared/errors";
 
 const DonorService = {
     create: async (userPayload: DonorUserCreatedEvent) => {
@@ -28,6 +31,15 @@ const DonorService = {
         } catch (error) {
             console.error("Error creating donor:", error);
         }
+    },
+
+    getByUserId: async (id:string)=> {
+        const result = await DonorModel.findOne({ user_id: id })
+        .catch((error)=> { throw error })
+        
+        if(!result) throw new NotFoundError("Donor profile not found");
+
+        return DonorEntity.fromRecordToEntity(result)
     }
 };
 

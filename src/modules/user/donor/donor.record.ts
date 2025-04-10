@@ -6,7 +6,7 @@ export interface DonorRecord {
     first_name: string;
     last_name: string;
     phone_number: string;
-    blood_type: string; // should be an enum
+    blood_type: DonorBloodTypes; // should be an enum
     is_eligible: boolean;
     last_donation_date: Date;
     next_eligible_date: Date;

@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 import { CareGiverRecord } from "./caregiver.record";
 
 const caregiverSchema = new mongoose.Schema<CareGiverRecord>({
-    id: {
-        type: mongoose.Schema.Types.ObjectId,
+    user_id: {
+        type: String,
         ref: 'users',
         required: true,
     },

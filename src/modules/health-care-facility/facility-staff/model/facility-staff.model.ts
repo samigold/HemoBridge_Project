@@ -12,6 +12,14 @@ const FacilityStaffSchema = new mongoose.Schema<FacilityStaffRecord>({
         ref: "users",
         required: true
     },
+    first_name: {
+        type: String,
+        required: true
+    },
+    last_name: {
+        type: String,
+        required: true
+    },
     address: {
         type: String,
         required: true
@@ -34,4 +42,4 @@ const FacilityStaffSchema = new mongoose.Schema<FacilityStaffRecord>({
         updatedAt: "updated_at"
     }
 })
-export const FacilityStaffModel = mongoose.model('health_care_facilities', FacilityStaffSchema);
+export const FacilityStaffModel = mongoose.model('health_care_facility_staffs', FacilityStaffSchema);
