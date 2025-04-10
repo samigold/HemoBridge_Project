@@ -1,8 +1,10 @@
+import { UserRecord } from "../base/model/user.record";
+import { UserEntity } from "../base/user.entity";
 import { CareGiverRecord } from "./caregiver.record";
 
 export interface CareGiverEntity {
     id: string;
-    userId: string;
+    userId: string | UserEntity;
     isActive: boolean;
     firstName: string;
     lastName: string;
@@ -16,7 +18,7 @@ export const CareGiverEntity = {
     fromRecordToEntity(record: CareGiverRecord): CareGiverEntity {
         return {
             id: record.id!,
-            userId: record.user_id,
+            userId: {...UserEntity.fromRecordToEntity(record.user_id as UserRecord), passwordHash: undefined },
             isActive: record.is_active,
             firstName: record.first_name,
             lastName: record.last_name,
