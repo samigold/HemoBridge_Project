@@ -4,7 +4,7 @@ import eventBus from "src/shared/events/event-bus";
 import { USER_EVENTS } from "src/shared/events/user.events";
 import { USER_ROLE } from "src/shared/constants/user-role.enum";
 import { ConflictError, InternalServerError, NotFoundError, ValidationError } from "src/shared/errors";
-import { DonorBloodTypes } from "../donor/donor.record";
+import { DonorBloodTypes } from "../donor/model/donor.record";
 
 export const UserController = {
     registerDonor: async (req: Request, res: Response) => {

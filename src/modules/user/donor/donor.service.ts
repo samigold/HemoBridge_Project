@@ -1,36 +1,27 @@
-import { DonorModel } from "./donor.model";
-// import logger from "src/insfrastructure/logger/logger";
+import { DonorModel } from "./model/donor.model";
 import eventBus from "src/shared/events/event-bus";
 import { DonorUserCreatedEvent, USER_EVENTS } from "src/shared/events/user.events";
 import { DonorEntity } from "./donor.entity";
-import { resourceLimits } from "worker_threads";
-import { NotFoundError } from "src/shared/errors";
+import { InternalServerError, NotFoundError } from "src/shared/errors";
 
 const DonorService = {
     create: async (userPayload: DonorUserCreatedEvent) => {
-        
-        try {
-            // Extract user details from the payload
-            const { user_id, first_name, last_name, phone_number, blood_type } = userPayload;
+        await DonorModel.create({
+            user_id: userPayload.user_id,
+            first_name: userPayload.first_name,
+            last_name: userPayload.last_name,
+            phone_number: userPayload.phone_number,
+            blood_type: userPayload.blood_type,
+            is_eligible: true,
+            last_donation_date: null,
+            next_eligible_date: null
 
+        }).catch((error)=> {
+            console.error("There was an error creating donor profile: ", error);
+            throw new InternalServerError("There was an error creating donor profile");
+        })
 
-            // Create a new donor record
-            const donor = await DonorModel.create({
-                id: user_id,
-                first_name: first_name,
-                last_name: last_name,
-                phone_number: phone_number,
-                blood_type: blood_type, // Ensure this field exists in the UserModel
-                is_eligible: true, // Default value
-                last_donation_date: null, // Default value
-                next_eligible_date: null, // Default value
-                medical_history: {} // Default value
-            });
-
-            console.info(`Donor created successfully: ${donor._id}`);
-        } catch (error) {
-            console.error("Error creating donor:", error);
-        }
+        return;
     },
 
     getByUserId: async (id:string)=> {

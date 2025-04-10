@@ -1,4 +1,4 @@
-import { DonorBloodTypes, DonorRecord } from "./donor.record";
+import { DonorBloodTypes, DonorRecord } from "./model/donor.record";
 
 export interface DonorEntity {
     id: string;

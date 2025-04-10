@@ -7,7 +7,8 @@ export const ProfileController = {
         const user = req.user!;
 
         const profile = await ProfileService.getProfileByRole({ id: user.id, role: user.role })
-        .catch(()=> {
+        .catch((error)=> {
+            if(error.statusCode) throw error;
             throw new InternalServerError("There was an error fetching profile");
         })
 
