@@ -26,8 +26,12 @@ const donorSchema = new mongoose.Schema<DonorRecord>({
     type: String,
     enum: DonorBloodTypes,
     required: true,
-  },  // "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"
-  is_eligible: Boolean,
+  }, 
+  is_eligible: {
+    type: Boolean,
+    default: true,
+    required: true
+  },
   last_donation_date: Date,
   next_eligible_date: Date,
     

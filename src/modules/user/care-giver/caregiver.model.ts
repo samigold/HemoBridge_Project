@@ -25,10 +25,6 @@ const caregiverSchema = new mongoose.Schema<CareGiverRecord>({
         type: String,
         required: true
     },
-    is_active: {
-        type: Boolean,
-        default: true
-    },
     created_at: {
         type: Date,
         default: Date.now
