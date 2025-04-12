@@ -32,7 +32,7 @@ export const FacilityService = {
         .limit(pagination.results_per_page)
         .sort({ created_at: "desc" })
         .catch((error)=> {
-            console.error("There was an error creating health care facility: ", error);
+            console.error("There was an error fetching health care facility: ", error);
             throw error
         })
 
@@ -55,13 +55,13 @@ export const FacilityService = {
     },
 
     findById: async(id: string)=> {
-        const createdFacilityRecord = await FacilityModel.findOne({ id })
+        const createdFacilityRecord = await FacilityModel.findById(id)
         .catch((error)=> {
             console.error("There was an error creating health care facility: ", error);
             throw error
         })
 
-        if(!createdFacilityRecord) throw new NotFoundError("Facility not found or id is invalid, please try again");
+        if(!createdFacilityRecord) return createdFacilityRecord
 
         return FacilityEntity.fromRecordToEntity(createdFacilityRecord);
     }

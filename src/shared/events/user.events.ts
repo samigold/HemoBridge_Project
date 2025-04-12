@@ -16,7 +16,6 @@ export interface DonorUserCreatedEvent {
 
 export interface AdminUserCreatedEvent {
     user_id: string;
-    email: string;
     first_name: string;
     last_name: string;
     role: USER_ROLE.ADMIN;

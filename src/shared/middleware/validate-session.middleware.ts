@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { AuthHelper } from "src/modules/user-management/auth/helpers/auth.helper";
-import { SessionService } from "src/modules/user-management/auth/session/session.service";
-import { UserService } from "src/modules/user-management/user/user.service";
+import { AuthHelper } from "src/modules/user/auth/helpers/auth.helper";
+import { SessionService } from "src/modules/user/auth/session/session.service";
+import { UserService } from "src/modules/user/base/user.service";
 import { NotAuthenticatedError } from "../errors";
 
 export const validateSession = async (req: Request, res: Response, next: NextFunction) => {

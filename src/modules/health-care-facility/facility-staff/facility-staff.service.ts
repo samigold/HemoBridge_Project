@@ -5,6 +5,8 @@ import { FacilityStaffModel } from "./model/facility-staff.model";
 import eventBus from "src/shared/events/event-bus";
 import { FacilityStaffUserCreatedEvent, USER_EVENTS } from "src/shared/events/user.events";
 import { USER_ROLE } from "src/shared/constants/user-role.enum";
+import { FacilityModel } from "../base/model/facility.model";
+import { PaginationUtils } from "src/shared/utils/pagination.utils";
 
 export const FacilityStaffService = {
     create: async(newFacility: ICreateFacility)=> {
@@ -24,7 +26,48 @@ export const FacilityStaffService = {
         if(!createdFacilityRecord) throw new NotFoundError("Facility record not created successfully");
 
         return FacilityStaffEntity.fromRecordToEntity(createdFacilityRecord);
-    }
+    },
+
+    getByUserId: async (id:string)=> {
+        const result = await FacilityStaffModel.findOne({ user_id: id })
+        .catch((error)=> { throw error })
+        
+        if(!result) throw new NotFoundError("Facility staff not found");
+
+        return FacilityStaffEntity.fromRecordToEntity(result)
+    },
+
+    findPaginated: async function(facilityId: string, page: number) {
+        
+        const pagination = PaginationUtils.calculatePage(page);
+
+        const createdFacilityRecords = await FacilityStaffModel.find({ facility_id: facilityId })
+        .populate("user_id")
+        .skip(pagination.list_offset)
+        .limit(pagination.results_per_page)
+        .sort({ created_at: "desc" })
+        .catch((error)=> {
+            console.error("There was an error fetching health care facility: ", error);
+            throw error
+        })
+
+        const total = await this.countFacilityStaffs()
+        .catch((error)=> { throw error })
+
+        return {
+            list: createdFacilityRecords.map(record => FacilityStaffEntity.fromRecordToEntity(record)),
+            currentPage: page,
+            totalPages: total
+        }
+    },
+
+    countFacilityStaffs: async()=> {
+        return FacilityModel.countDocuments()
+        .catch((error)=> { 
+            console.error("There was an error counting facility documents", error);
+            throw error
+        })
+    },
 }
 
 eventBus.on(USER_EVENTS.CREATED, async (userPayload: FacilityStaffUserCreatedEvent) => {

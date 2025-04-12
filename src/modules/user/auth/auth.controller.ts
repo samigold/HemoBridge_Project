@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import { SessionService } from './session/session.service';
 import { PasswordHelper } from 'src/shared/helpers/password.helper';
-import { UserService } from '../user/user.service';
+import { UserService } from '../base/user.service';
 
 // import { sendVerificationEmail, sendWelcomeEmail, sendResetPasswordEmail } from '../../insfrastructure/mailtrap/emails';
 

@@ -1,32 +1,33 @@
 import { Request, Response } from "express";
-import { ValidationError } from "src/shared/errors";
 import { FacilityStaffService } from "./facility-staff.service";
+import { InternalServerError, NotFoundError, ValidationError } from "src/shared/errors";
+import { FacilityService } from "../base/facility.service";
 
 export const FacilityStaffController = {
-    create: async(req: Request, res: Response)=> {
+    fetch: async(req: Request, res: Response)=> {
 
-        const { name, address, email, phoneNumber, operationalHours } = req.body;
-
-        if(!name || !address || !email || !phoneNumber || !operationalHours) {
-            throw new ValidationError("All fields are required");
-        }
-
-        const createdFacilityRecord = await FacilityStaffService.create({
-            name,
-            address,
-            email,
-            phoneNumber,
-            operationalHours
+        const { page, facilityId } =  req.params;
         
-        }).catch((error)=> {
-            console.error("There was an error creating health care facility: ", error);
-            throw error
+        if(!page || isNaN(Number(page))) throw new ValidationError("Page number is required to fetch this list");
+        if(!facilityId) throw new ValidationError("Facility id required to fetch this list");
+
+        const foundFacility = await FacilityService.findById(facilityId)
+        .catch(()=> {
+            throw new InternalServerError("There was an error fetching health care facility list");
+        })
+
+        if(!foundFacility) throw new NotFoundError("Invalid facility id");
+
+        const foundPaginatedResults = await FacilityStaffService.findPaginated(facilityId, Number(page))
+        .catch((error)=> {
+            console.error("There was an error fetching health care facility list: ", error);
+            throw new InternalServerError("There was an error fetching health care facility list");
         })
 
         res.status(201).json({
             success: true,
-            message: "New health care facility created successfully",
-            data: createdFacilityRecord
+            message: "Health care facility staffs retrieved successfully",
+            data: foundPaginatedResults
         });
-    }
+    },
 }

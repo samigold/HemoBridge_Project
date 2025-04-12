@@ -3,7 +3,9 @@ import { UserService } from "./user.service";
 import eventBus from "src/shared/events/event-bus";
 import { USER_EVENTS } from "src/shared/events/user.events";
 import { USER_ROLE } from "src/shared/constants/user-role.enum";
-import { ValidationError } from "src/shared/errors";
+import { ConflictError, InternalServerError, NotFoundError, ValidationError } from "src/shared/errors";
+import { DonorBloodTypes } from "../donor/model/donor.record";
+import { FacilityService } from "src/modules/health-care-facility/base/facility.service";
 
 export const UserController = {
     registerDonor: async (req: Request, res: Response) => {
@@ -14,6 +16,18 @@ export const UserController = {
             throw new ValidationError('All fields are required');
         }
 
+        if(!Object.values(DonorBloodTypes).includes(bloodType)) {
+            throw new ValidationError("Invalid blood type. Accepted values are: A+, A-, B+, B-, AB+, AB-, O+, O-")
+        }
+
+        const result = await UserService.fetchByEmail(email)
+        .catch((error)=> {
+            if(error.statusCode !== 404)
+            throw new InternalServerError('There was an error creating donor, please try again');
+        })
+
+        if(result) throw new ConflictError('Email already exist, please choose a new one, or reset your password');
+
         const createdUserEntity = await UserService.create({
             email,
             password,
@@ -21,7 +35,7 @@ export const UserController = {
             role: USER_ROLE.DONOR
 
         }).catch(()=> {
-            throw new Error('Invalid donor data. Error creating Donor');
+            throw new InternalServerError('There was an error creating donor, please try again');
         })
 
         eventBus.emit(USER_EVENTS.CREATED, {
@@ -50,6 +64,13 @@ export const UserController = {
         if (!firstName || !lastName || !email || !password || !phoneNumber || !address) {
             throw new ValidationError('All fields are required');
         }
+
+        const result = await UserService.fetchByEmail(email)
+        .catch(()=> {
+            throw new InternalServerError('There was an error creating care giver, please try again');
+        })
+
+        if(result) throw new ConflictError('Email already exist, please choose a new one, or reset your password');
 
         const createdUserEntity = await UserService.create({
             email,
@@ -84,6 +105,20 @@ export const UserController = {
             throw new ValidationError('All fields are required');
         }
 
+        const foundFacility = await FacilityService.findById(facilityId)
+        .catch(()=> {
+            throw new InternalServerError("There was an error fetching health care facility list");
+        })
+
+        if(!foundFacility) throw new NotFoundError("Invalid facility id");
+
+        const result = await UserService.fetchByEmail(email)
+        .catch(()=> {
+            throw new InternalServerError('There was an error creating facility staff, please try again');
+        })
+
+        if(result) throw new ConflictError('Email already exist, please choose a new one, or reset your password');
+
         const createdUserEntity = await UserService.create({
             email,
             password,
@@ -91,11 +126,12 @@ export const UserController = {
             role: USER_ROLE.FACILITY_STAFF
 
         }).catch(()=> {
-            throw new Error('Invalid donor data. Error creating Donor');
+            throw new InternalServerError("There was an error creating a new user");
         })
 
         eventBus.emit(USER_EVENTS.CREATED, {
             user_id: createdUserEntity.id,
+            facility_id: facilityId,
             first_name: firstName,
             last_name: lastName,
             address: address,
@@ -107,7 +143,7 @@ export const UserController = {
         
         res.status(201).json({
             success: true,
-            message: "New donor user created successfully",
+            message: "New facility staff user created successfully",
             user: createdUserEntity
         });
     },
@@ -121,20 +157,26 @@ export const UserController = {
             throw new Error('All fields are required');
         }
 
+        const result = await UserService.fetchByEmail(email)
+        .catch(()=> {
+            throw new InternalServerError('There was an error creating admin, please try again');
+        })
+
+        if(result) throw new ConflictError('Email already exist, please choose a new one, or reset your password');
+
         const createdUserEntity = await UserService.create({
             email,
             password,
-            role: USER_ROLE.DONOR
+            role: USER_ROLE.ADMIN
 
         }).catch(()=> {
-            throw new Error('Invalid donor data. Error creating Donor');
+            throw new InternalServerError('There was an error creating admin, please try again');
         })
 
         eventBus.emit(USER_EVENTS.CREATED, {
             user_id: createdUserEntity.id,
-            email: createdUserEntity.id,
-            first_name: createdUserEntity.id,
-            last_name: createdUserEntity.id,
+            first_name: firstName,
+            last_name: lastName,
             role: USER_ROLE.ADMIN,
         });
         
@@ -142,9 +184,8 @@ export const UserController = {
         
         res.status(201).json({
             success: true,
-            message: "New admin user created successfully",
-            user: createdUserEntity
+            message: "New admin user created successfully"
         });
-    }
+    },
 }
 

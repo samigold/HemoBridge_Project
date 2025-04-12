@@ -2,7 +2,7 @@ import { SessionRecord } from "./model/session.record";
 
 export interface SessionEntity {
     id: string; //uuid
-    userId: string; //uuid
+    userId: string;
     accessToken: string;
     revoked: boolean;
     lastUsedAt: Date;

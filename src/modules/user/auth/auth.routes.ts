@@ -1,5 +1,6 @@
 import express from 'express';
 import { AuthController } from './auth.controller';
+import { applyAsyncHandler } from 'src/shared/middleware/async-handler.middleware';
 // import AuthController from './auth.controller';
 
 const AuthRoutes = express.Router();
@@ -19,5 +20,5 @@ AuthRoutes.post('/login', AuthController.login);
 
 
 // AuthRoutes.post('/logout', AuthController.logout);
-
+applyAsyncHandler(AuthRoutes);
 export default AuthRoutes;

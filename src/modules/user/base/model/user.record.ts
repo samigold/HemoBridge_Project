@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { USER_ROLE } from "src/shared/constants/user-role.enum";
 
 export interface UserRecord {
     _id?: Types.ObjectId;
@@ -9,7 +10,7 @@ export interface UserRecord {
     phone_number: string;
     blood_type: string;
     password_hash: string;
-    role: string;
+    role: USER_ROLE;
     last_seen: Date;
     created_at: Date;
     updated_at: Date;

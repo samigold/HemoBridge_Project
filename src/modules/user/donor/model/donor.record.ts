@@ -1,12 +1,13 @@
 import { Types } from "mongoose";
 
 export interface DonorRecord {
-    _id: Types.ObjectId;
-    id?: string;
+    _id?: Types.ObjectId;
+    id: string;
+    user_id: string;
     first_name: string;
     last_name: string;
     phone_number: string;
-    blood_type: string; // should be an enum
+    blood_type: DonorBloodTypes; // should be an enum
     is_eligible: boolean;
     last_donation_date: Date;
     next_eligible_date: Date;
