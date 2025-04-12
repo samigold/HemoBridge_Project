@@ -130,7 +130,105 @@ HemoBridge is a comprehensive solution designed to streamline and enhance health
     }
     ```
 
+### Health Care Facility Routes
 
+#### Create Facility
+- **URL**: `/facility`
+- **Method**: `POST`
+- **Headers**:
+    ```json
+    {
+        "Authorization": "Bearer <JWT-Token>"
+    }
+    ```
+- **Request Body**:
+    ```json
+    {
+        "name": "City Hospital",
+        "address": "789 Pine St",
+        "email": "contact@cityhospital.com",
+        "phoneNumber": "5551234567",
+        "operationalHours": "9 AM - 5 PM"
+    }
+    ```
+- **Response**:
+    ```json
+    {
+        "success": true,
+        "message": "New health care facility created successfully",
+        "data": {
+            "id": "facility-id",
+            "name": "City Hospital",
+            "address": "789 Pine St",
+            "contactInfo": {
+                "email": "contact@cityhospital.com",
+                "phoneNumber": "5551234567"
+            },
+            "operationalHours": "9 AM - 5 PM"
+        }
+    }
+    ```
+
+### Fetch Facilities (By Id)
+- **URL**: `/facility/:facilityId`
+- **Method**: `GET`
+- **Headers**:
+    ```json
+    {
+        "Authorization": "Bearer <JWT-Token>"
+    }
+    ```
+- **Response**:
+    ```json
+    {
+        "success": true,
+        "message": "Health care facility retrieved successfully",
+        "data": {
+            "id": "facility-id",
+            "name": "City Hospital",
+            "address": "789 Pine St",
+            "contactInfo": {
+                "email": "contact@cityhospital.com",
+                "phoneNumber": "5551234567"
+            },
+            "operationalHours": "9 AM - 5 PM"
+        }
+    }
+    ```
+#### Fetch Facilities (Paginated)
+- **URL**: `/facility/:page`
+- **Method**: `GET`
+- **Headers**:
+    ```json
+    {
+        "Authorization": "Bearer <JWT-Token>"
+    }
+    ```
+- **Response**:
+    ```json
+    {
+        "success": true,
+        "message": "Health care facilities retrieved successfully",
+        "data": {
+            "list": [
+                {
+                    "id": "facility-id",
+                    "name": "City Hospital",
+                    "address": "789 Pine St",
+                    "contactInfo": {
+                        "email": "contact@cityhospital.com",
+                        "phoneNumber": "5551234567"
+                    },
+                    "operationalHours": "9 AM - 5 PM"
+                }
+            ],
+            "currentPage": 1,
+            "totalPages": 10
+        }
+    }
+    ```
+
+---
 ## Contributing
 
 Contributions are welcome! Please follow these steps:

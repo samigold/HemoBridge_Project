@@ -9,6 +9,7 @@ const FacilityRoutes = express.Router();
 
 FacilityRoutes.post("/", validateSession, validateAccess(USER_ROLE.ADMIN), (req, res)=> FacilityController.create(req, res));
 FacilityRoutes.get("/:page", validateSession, (req, res)=> FacilityController.fetch(req, res));
+FacilityRoutes.get("/:id", validateSession, (req, res)=> FacilityController.fetchById(req, res));
 
 applyAsyncHandler(FacilityRoutes)
 export default FacilityRoutes;
