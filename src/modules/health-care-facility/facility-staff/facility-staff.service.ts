@@ -68,6 +68,18 @@ export const FacilityStaffService = {
             throw error
         })
     },
+
+    getFacilityIdByStaffId: async (staffId: string) => {
+        const facilityStaff = await FacilityStaffModel.findOne({ user_id: staffId })
+            .catch((error) => { 
+                console.error("There was an error fetching facility staff by ID: ", error);
+                throw error 
+            });
+
+        if (!facilityStaff) throw new NotFoundError("Facility staff not found");
+
+        return facilityStaff.facility_id;
+    },
 }
 
 eventBus.on(USER_EVENTS.CREATED, async (userPayload: FacilityStaffUserCreatedEvent) => {

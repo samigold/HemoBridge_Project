@@ -2,6 +2,7 @@ import express from 'express';
 import HealthCareFacilityRouter from './health-care-facility/health-care-facility.routes';
 import UserManagementRouter from './user/module.routes';
 import UserModuleRouter from './user/module.routes';
+import BloodInventoryRouter from './blood-inventory/blood-inventory.routes';
 
 const BaseRouter = express.Router();
 
@@ -10,5 +11,6 @@ BaseRouter.get('/health', (req, res) => {
 });
 BaseRouter.use(UserModuleRouter);
 BaseRouter.use(HealthCareFacilityRouter);
+BaseRouter.use(BloodInventoryRouter);
 
 export default BaseRouter;
