@@ -2,7 +2,10 @@ import { UserModel } from "./model/user.model";
 import { ICreateUser } from "./user.types";
 import { UserEntity } from "./user.entity";
 import { PasswordHelper } from "src/shared/helpers/password.helper";
-import { NotFoundError } from "src/shared/errors";
+import eventBus from "src/shared/events/event-bus";
+import { FACILITY_EVENTS, FacilityCreatedEvent } from "src/shared/events/facility.events";
+import { USER_ROLE } from "src/shared/constants/user-role.enum";
+import { FacilityStaffUserCreatedEvent, USER_EVENTS } from "src/shared/events/user.events";
 
 export const UserService = {
     fetchById: async (id:string)=> {
@@ -77,3 +80,28 @@ export const UserService = {
         return UserEntity.fromRecordToEntity(createdUserRecord);
     },
 }
+
+eventBus.on(FACILITY_EVENTS.CREATED, async (facilityPayload: FacilityCreatedEvent) => {
+    const newUser = await UserService.create({
+        email: facilityPayload.personnel.email,
+        phone_number: facilityPayload.personnel.phone_number,
+        password: facilityPayload.personnel.password,
+        role: USER_ROLE.FACILITY_STAFF
+
+    }).catch((error)=> {
+        console.error("There was an error creating new faciltiy staff user", error);
+        throw error;
+    })
+
+    const payload: FacilityStaffUserCreatedEvent = {
+        facility_id: facilityPayload.facility_id,
+        user_id: newUser.id,
+        first_name: facilityPayload.personnel.first_name,
+        last_name: facilityPayload.personnel.last_name,
+        phone_number: facilityPayload.personnel.phone_number,
+        address: "",
+        role: USER_ROLE.FACILITY_STAFF
+    }
+
+    eventBus.emit(USER_EVENTS.CREATED, payload);
+})
