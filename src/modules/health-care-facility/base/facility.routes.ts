@@ -7,7 +7,7 @@ import { applyAsyncHandler } from 'src/shared/middleware/async-handler.middlewar
 
 const FacilityRoutes = express.Router();
 
-FacilityRoutes.post("/", validateSession, validateAccess(USER_ROLE.ADMIN), (req, res)=> FacilityController.create(req, res));
+FacilityRoutes.post("/", validateSession, (req, res)=> FacilityController.create(req, res));
 FacilityRoutes.get("/:page", validateSession, (req, res)=> FacilityController.fetch(req, res));
 
 applyAsyncHandler(FacilityRoutes)

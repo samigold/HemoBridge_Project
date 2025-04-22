@@ -9,10 +9,10 @@ export const FacilityService = {
         const createdFacilityRecord = await FacilityModel.create({
             name: newFacility.name,
             address: newFacility.address,
-            contact_info: {
-                email: newFacility.email,
-                phone_number: newFacility.phoneNumber
-            },
+            // contact_info: {
+            //     email: newFacility.email,
+            //     phone_number: newFacility.phoneNumber
+            // },
             operational_hours: newFacility.operationalHours
         
         }).catch((error)=> {
