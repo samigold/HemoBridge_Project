@@ -21,8 +21,7 @@ const FacilityStaffSchema = new mongoose.Schema<FacilityStaffRecord>({
         required: true
     },
     address: {
-        type: String,
-        required: true
+        type: String
     },
     phone_number: {
         type: String,

@@ -37,6 +37,5 @@ export interface FacilityStaffUserCreatedEvent {
     last_name: string;
     phone_number: string;
     address: string;
-    email: string;
     role: USER_ROLE.FACILITY_STAFF;
 }

@@ -6,7 +6,7 @@ export interface FacilityStaffEntity {
     id: string;
     userId: string | UserEntity;
     facilityId: string;
-    address: string;
+    address?: string;
     phoneNumber: string;
     createdAt: Date;
     updatedAt: Date;

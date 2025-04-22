@@ -1,27 +1,59 @@
 import { Request, Response } from "express";
 import { FacilityService } from "./facility.service";
 import { ValidationError } from "src/shared/errors";
+import eventBus from "src/shared/events/event-bus";
+import { FACILITY_EVENTS, FacilityCreatedEvent } from "src/shared/events/facility.events";
 
 export const FacilityController = {
     create: async(req: Request, res: Response)=> {
 
-        const { name, address, email, phoneNumber, operationalHours } = req.body;
+        const { 
+            facilityName,
+            operationalHours,
+            address,
+            personnelFirstname,
+            personnelLastname,
+            personnelEmail,
+            personnelPhoneNumber,
+            personnelPassword
 
-        if(!name || !address || !email || !phoneNumber || !operationalHours) {
+        } = req.body;
+
+        if(!facilityName ||
+            !operationalHours ||
+            !address ||
+            !personnelFirstname ||
+            !personnelLastname ||
+            !personnelEmail ||
+            !personnelPhoneNumber ||
+            !personnelPassword) {
+
             throw new ValidationError("All fields are required");
         }
 
         const createdFacilityRecord = await FacilityService.create({
-            name,
-            address,
-            email,
-            phoneNumber,
-            operationalHours
+            name: facilityName,
+            address: address,
+            // phoneNumber,
+            operationalHours: operationalHours ?? "9AM to 5PM"
         
         }).catch((error)=> {
             console.error("There was an error creating health care facility: ", error);
             throw error
         })
+
+        const newFacilityCreatedPayload: FacilityCreatedEvent = {
+            facility_id: createdFacilityRecord.id,
+            personnel: {
+                email: personnelEmail,
+                phone_number: personnelPhoneNumber,
+                password: personnelPassword,
+                first_name: personnelFirstname,
+                last_name: personnelLastname
+            }
+        }
+
+        eventBus.emit(FACILITY_EVENTS.CREATED, newFacilityCreatedPayload);
 
         res.status(201).json({
             success: true,

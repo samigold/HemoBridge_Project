@@ -6,16 +6,16 @@ const FacilitySchema = new mongoose.Schema<FacilityRecord>({
         type: String,
         required: true
     },
-    contact_info: {
-        email: {
-            type: String,
-            required: true
-        },
-        phone_number: {
-            type: String,
-            required: true
-        },
-    },
+    // contact_info: {
+    //     email: {
+    //         type: String,
+    //         required: true
+    //     },
+    //     phone_number: {
+    //         type: String,
+    //         required: true
+    //     },
+    // },
     address: {
         type: String,
         required: true
