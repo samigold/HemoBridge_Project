@@ -9,7 +9,7 @@ import { FacilityService } from "src/modules/health-care-facility/base/facility.
 
 export const UserController = {
     registerDonor: async (req: Request, res: Response) => {
-
+        console.log(req.body)
         const { firstName, lastName, email, password, phoneNumber, bloodType, address } = req.body;
 
         if (!firstName || !lastName || !email || !password || !phoneNumber || !bloodType || !address) {
