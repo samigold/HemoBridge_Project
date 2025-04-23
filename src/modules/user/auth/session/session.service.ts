@@ -68,7 +68,10 @@ export const SessionService = {
             user_id: userId,
             access_token: AuthHelper.generateToken(payload, this.ACCESS_TOKEN_SECRET , this.ACCESS_TOKEN_EXPIRES_IN),
 
-        }).catch((error)=> { throw error })
+        }).catch((error)=> { 
+            console.error("There was an error creating a new session", error);
+            throw error 
+        })
 
         if(!result) return null
 
