@@ -3,6 +3,7 @@ import asyncHandler from 'express-async-handler';
 import { SessionService } from './session/session.service';
 import { PasswordHelper } from 'src/shared/helpers/password.helper';
 import { UserService } from '../base/user.service';
+import { InternalServerError, NotFoundError, ValidationError } from 'src/shared/errors';
 
 // import { sendVerificationEmail, sendWelcomeEmail, sendResetPasswordEmail } from '../../insfrastructure/mailtrap/emails';
 
@@ -243,42 +244,32 @@ export const AuthController = {
         const { email, password } = req.body;
 
         if(!email || !password){
-            res.status(400);
-            throw new Error('All fields are required');
+            throw new ValidationError("Email and password fields are required")
         }
 
         //Check if user exists
         const user = await UserService.fetchByEmail(email)
-        .catch((error)=> { throw new Error(error.message) })
+        .catch(()=> { throw new InternalServerError("") })
 
-        if(!user){
-            res.status(400);
-            throw new Error('Invalid email or password');
-        }
+        if(!user) throw new NotFoundError("Invalid email and password match");
 
         //Check if password is correct
         const isPasswordMatch = PasswordHelper.verify(password, user.passwordHash!);
 
-        if(!isPasswordMatch){
-            res.status(400);
-            throw new Error('Invalid email or password');
-        }
+        if(!isPasswordMatch) throw new NotFoundError("Invalid email and password match");
 
         const foundSession = await SessionService.findUserActiveSession(user.id)
         .catch(()=> { throw new Error()})
 
         if(foundSession) {
             await SessionService.revokeSession(user.id)
-            .catch(()=> { throw new Error() })
+            .catch(()=> { throw new InternalServerError("") })
         }
 
         const newSession = await SessionService.add(user.id)
-        .catch((error)=> { 
-            console.error("There was an error creating a new session", error);
-            throw new Error("There was error logging in, please try again")
-        })
+        .catch(()=> { throw new InternalServerError("") })
 
-        if(!newSession) throw new Error('Oops! The email or password entered does not match our record. Please confirm and try again.')
+        if(!newSession) throw new NotFoundError("Invalid email and password match");
         
         delete user.passwordHash;
             
@@ -295,7 +286,7 @@ export const AuthController = {
     // @route   POST /auth/logout
     // @access  Private
     logout: asyncHandler(async (req, res) => {
-        res.clearCookie('jwt');
+        res.clearCookie('session-id');
         res.status(200).json({
             success: true,
             message: 'Logged out successfully'
