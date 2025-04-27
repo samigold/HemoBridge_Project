@@ -18,6 +18,6 @@ interface ILocalDB {
 }
 
 export async function fetchLocalDB(): Promise<ILocalDB> {
-    const db = await loadJsonFromFile<ILocalDB>("data/db.json");
+    const db = await loadJsonFromFile<ILocalDB>("../../../data/db.json");
     return db;
 }
