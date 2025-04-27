@@ -72,6 +72,7 @@ export const FacilityStaffService = {
 
 eventBus.on(USER_EVENTS.CREATED, async (userPayload: FacilityStaffUserCreatedEvent) => {
     if (userPayload.role === USER_ROLE.FACILITY_STAFF) { // Process only if the role is "facility_staff"
+        console.log("demo staff created, time to create it's profile")
         await FacilityStaffService.create(userPayload);
     }
 });
