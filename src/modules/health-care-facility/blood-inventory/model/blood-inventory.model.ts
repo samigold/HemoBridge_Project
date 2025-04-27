@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { BloodInventoryRecord } from './blood-inventory.record';
 import { DonorBloodTypes } from 'src/modules/user/donor/model/donor.record';
 
@@ -25,7 +25,7 @@ const BloodInventorySchema = new mongoose.Schema<BloodInventoryRecord>({
     }
 })
 
-export const BloodInventoryModel = mongoose.model('blood_inventory', BloodInventorySchema);
+export const BloodInventoryModel: Model<BloodInventoryRecord> = mongoose.model('blood_inventories', BloodInventorySchema);
 
 // RULES:
 // 1. multiple records cannot have the same facility_id and blood_type, one has to be different, 
