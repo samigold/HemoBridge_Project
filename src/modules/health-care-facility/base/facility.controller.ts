@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import { FacilityService } from "./facility.service";
-import { ValidationError } from "src/shared/errors";
+import { InternalServerError, NotFoundError, ValidationError } from "src/shared/errors";
 import eventBus from "src/shared/events/event-bus";
 import { FACILITY_EVENTS, FacilityCreatedEvent } from "src/shared/events/facility.events";
+import { fetchLocalDB } from "src/shared/helpers/local-db.helper";
+import { BloodInventoryService } from "../blood-inventory/blood-inventory.service";
 
 export const FacilityController = {
     create: async(req: Request, res: Response)=> {
@@ -95,6 +97,59 @@ export const FacilityController = {
             success: true,
             message: "Health care facilities retrieved successfully",
             data: foundPaginatedResults
+        });
+    },
+
+    createFromLocalDB: async (req: Request, res: Response)=> {
+        const data = await fetchLocalDB()
+        .catch((error)=> {
+            console.log("There was an error fetching local db: ", error);
+            throw new InternalServerError("")
+        })
+
+        if(!data.facilities || !data.facilities.length) throw new NotFoundError("Facilities not found in local db");
+
+        for await (const facility of data.facilities) {
+            // Create the facility
+            const createdFacilityRecord = await FacilityService.create({
+                name: facility.name,
+                address: facility.address,
+                operationalHours: facility.hours ?? "9AM to 5PM"
+            
+            }).catch((error)=> {
+                console.error("There was an error creating health care facility: ", error);
+                throw error
+            })
+
+            for await (const stock of facility.stock) {
+                await BloodInventoryService.create({
+                    facilityId: createdFacilityRecord.id,
+                    bloodType: stock.type,
+                    unitsAvailable: stock.stock
+                }).catch((error)=> {
+                    console.error("There was an error creating a blood inventory for health care facility: ", error);
+                    throw error
+                })
+            }
+
+            // create the facility staff
+            const newFacilityCreatedPayload: FacilityCreatedEvent = {
+                facility_id: createdFacilityRecord.id,
+                personnel: {
+                    email: `staff@${facility.name.replace(/ /g, "-")}.com`,
+                    phone_number: "8012345678",
+                    password: "1234567890",
+                    first_name: "demo",
+                    last_name: "staff"
+                }
+            }
+    
+            eventBus.emit(FACILITY_EVENTS.CREATED, newFacilityCreatedPayload);
+        }
+
+        res.status(201).json({
+            success: true,
+            message: "New Facilities created from local db successfully"
         });
     }
 }
