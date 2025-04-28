@@ -1,4 +1,4 @@
-import { InternalServerError, NotFoundError } from "src/shared/errors";
+import { InternalServerError } from "src/shared/errors";
 import { FacilityEntity } from "./facility.entity";
 import { ICreateFacility } from "./facility.types";
 import { FacilityModel } from "./model/facility.model";
