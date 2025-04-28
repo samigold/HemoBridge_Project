@@ -1,8 +1,9 @@
-import { NotFoundError } from "src/shared/errors";
+import { InternalServerError, NotFoundError } from "src/shared/errors";
 import { FacilityEntity } from "./facility.entity";
 import { ICreateFacility } from "./facility.types";
 import { FacilityModel } from "./model/facility.model";
 import { PaginationUtils } from "src/shared/utils/pagination.utils";
+import { BloodInventoryService } from "../blood-inventory/blood-inventory.service";
 
 export const FacilityService = {
     create: async(newFacility: ICreateFacility)=> {
@@ -28,7 +29,7 @@ export const FacilityService = {
         
         const pagination = PaginationUtils.calculatePage(page);
 
-        const createdFacilityRecords = await FacilityModel.find({ })
+        const facilityRecords = await FacilityModel.find({ })
         .skip(pagination.list_offset)
         .limit(pagination.results_per_page)
         .sort({ created_at: "desc" })
@@ -38,10 +39,39 @@ export const FacilityService = {
         })
 
         const total = await this.countFacilities()
-        .catch(()=> {  })
+        .catch(()=> { throw new InternalServerError("") })
+
+        const facilityWithInventoryRecords = [];
+
+        // fetch lowest stock level in inventory
+        for await (const facilityRecord of facilityRecords) {
+            const inventories = await BloodInventoryService.findByFacilityId(facilityRecord.id)
+            .catch(()=> {  })
+
+            let high, medium, low;
+
+            if(inventories) {
+                high = inventories.some(item => item.unitsAvailable <= 1) 
+                medium = inventories.some(item => item.unitsAvailable <= 6) 
+                low = inventories.some(item => item.unitsAvailable > 6)
+                console.log(`${facilityRecord.name}: `, inventories)
+            }
+
+            facilityWithInventoryRecords.push({
+                ...FacilityEntity.fromRecordToEntity(facilityRecord),
+                urgency: high ? "high"
+                            : medium ? "medium" 
+                            : "low"
+            })
+
+        }
+        // createdFacilityRecords.map(record => ({
+        //     ...FacilityEntity.fromRecordToEntity(record),
+        //     urgency: 
+        // }))
 
         return {
-            list: createdFacilityRecords.map(record => FacilityEntity.fromRecordToEntity(record)),
+            list: facilityWithInventoryRecords,
             currentPage: page,
             totalPages: total
         }
