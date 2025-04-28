@@ -1,3 +1,4 @@
+import { DonorBloodTypes } from "src/modules/user/donor/model/donor.record";
 import { FacilityRecord } from "./model/facility.record";
 
 export interface FacilityEntity {
@@ -8,6 +9,7 @@ export interface FacilityEntity {
     //     email: string;
     //     phoneNumber: string;
     // };
+    bloodTypes: DonorBloodTypes[];
     operationalHours: string;
     createdAt: Date;
     updatedAt: Date;
@@ -19,6 +21,7 @@ export const FacilityEntity = {
             id: record.id,
             name: record.name,
             address: record.address,
+            bloodTypes: record.blood_types,
             // contactInfo: {
             //     email: record.contact_info.email,
             //     phoneNumber: record.contact_info.phone_number
