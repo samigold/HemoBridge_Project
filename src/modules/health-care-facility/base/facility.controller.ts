@@ -107,7 +107,7 @@ export const FacilityController = {
     createFromLocalDB: async (req: Request, res: Response)=> {
         const data = await fetchLocalDB()
         .catch((error)=> {
-            console.log("There was an error fetching local db: ", error);
+            console.error("There was an error fetching local db: ", error);
             throw new InternalServerError("")
         })
 
