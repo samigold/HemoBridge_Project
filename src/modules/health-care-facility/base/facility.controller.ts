@@ -13,6 +13,7 @@ export const FacilityController = {
             facilityName,
             operationalHours,
             address,
+            bloodTypes,
             personnelFirstname,
             personnelLastname,
             personnelEmail,
@@ -24,6 +25,8 @@ export const FacilityController = {
         if(!facilityName ||
             !operationalHours ||
             !address ||
+            !bloodTypes ||
+            !bloodTypes.length ||
             !personnelFirstname ||
             !personnelLastname ||
             !personnelEmail ||
@@ -37,7 +40,8 @@ export const FacilityController = {
             name: facilityName,
             address: address,
             // phoneNumber,
-            operationalHours: operationalHours ?? "9AM to 5PM"
+            operationalHours: operationalHours ?? "9AM to 5PM",
+            bloodTypes: bloodTypes
         
         }).catch((error)=> {
             console.error("There was an error creating health care facility: ", error);
@@ -114,7 +118,9 @@ export const FacilityController = {
             const createdFacilityRecord = await FacilityService.create({
                 name: facility.name,
                 address: facility.address,
-                operationalHours: facility.hours ?? "9AM to 5PM"
+                operationalHours: facility.hours ?? "9AM to 5PM",
+                bloodTypes: facility.bloodType
+
             
             }).catch((error)=> {
                 console.error("There was an error creating health care facility: ", error);
@@ -136,7 +142,7 @@ export const FacilityController = {
             const newFacilityCreatedPayload: FacilityCreatedEvent = {
                 facility_id: createdFacilityRecord.id,
                 personnel: {
-                    email: `staff@${facility.name.replace(/ /g, "-")}.com`,
+                    email: `demo-staff@${facility.name.replace(/ /g, "-")}.com`.toLowerCase(),
                     phone_number: "8012345678",
                     password: "1234567890",
                     first_name: "demo",
