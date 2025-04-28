@@ -5,9 +5,9 @@ import { applyAsyncHandler } from 'src/shared/middleware/async-handler.middlewar
 
 const FacilityRoutes = express.Router();
 
-FacilityRoutes.post("/", validateSession, (req, res)=> FacilityController.create(req, res));
-FacilityRoutes.get("/:page", validateSession, (req, res)=> FacilityController.fetch(req, res));
 FacilityRoutes.post("/create-from-local-db", (req, res)=> FacilityController.createFromLocalDB(req, res))
+FacilityRoutes.get("/:page", validateSession, (req, res)=> FacilityController.fetch(req, res));
+FacilityRoutes.post("/", validateSession, (req, res)=> FacilityController.create(req, res));
 
 applyAsyncHandler(FacilityRoutes)
 export default FacilityRoutes;
