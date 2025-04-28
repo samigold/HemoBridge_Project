@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
-import { InternalServerError } from "src/shared/errors";
+import { InternalServerError, ValidationError } from "src/shared/errors";
 import { BloodInventoryService } from "./blood-inventory.service";
 
 export const BloodInventoryController = {
     fetchAll: async(req: Request, res: Response)=> {
-        const inventories = await BloodInventoryService.findAll()
+        if(!req.params.facilityId) throw new ValidationError("");
+
+        const inventories = await BloodInventoryService.findByFacilityId(req.params.facilityId)
         .catch((error)=> {
             console.error("Error fetching blood inventories:", error);
             throw new InternalServerError("Failed to fetch blood inventories");
