@@ -4,6 +4,16 @@ import { BloodInventoryModel } from "./model/blood-inventory.model"
 import { BloodInventoryEntity } from "./blood-inventory.entity"
 
 export const BloodInventoryService = {
+    findAll: async () => {
+        const foundInventoryRecords = await BloodInventoryModel.find()
+        .catch((error)=> { 
+            console.error("There was an error finding blood inventory records: ", error);
+            throw new InternalServerError("Failed to fetch blood inventories")
+        })
+
+        return foundInventoryRecords.map(record => BloodInventoryEntity.fromRecord(record));
+    },
+
     findByFacilityId: async (facilityId: string)=> {
         const foundInventoryRecords = await BloodInventoryModel.find({ facility_id: facilityId })
         .catch((error)=> { 

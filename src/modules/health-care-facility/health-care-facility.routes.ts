@@ -6,5 +6,6 @@ const HealthCareFacilityRouter = express.Router();
 
 HealthCareFacilityRouter.use('/facility', FacilityRoutes);
 HealthCareFacilityRouter.use('/facility/:facilityId/staff', FacilityStaffRoutes);
+HealthCareFacilityRouter.use('/facility/:facilityId/staff', FacilityStaffRoutes);
 
 export default HealthCareFacilityRouter;
