@@ -51,7 +51,7 @@ export const UserService = {
     fetchByEmail: async (email:string)=> {
         const userRecord = await UserModel.findOne({ email })
         .catch((error)=> { 
-            console.log("There was an error fetching user by email: ", error);
+            console.error("There was an error fetching user by email: ", error);
             throw new Error(error) 
         })
 
