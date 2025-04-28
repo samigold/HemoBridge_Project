@@ -9,11 +9,12 @@ export const FacilityService = {
         const createdFacilityRecord = await FacilityModel.create({
             name: newFacility.name,
             address: newFacility.address,
+            operational_hours: newFacility.operationalHours,
+            blood_types: newFacility.bloodTypes
             // contact_info: {
             //     email: newFacility.email,
             //     phone_number: newFacility.phoneNumber
             // },
-            operational_hours: newFacility.operationalHours
         
         }).catch((error)=> {
             console.error("There was an error creating health care facility: ", error);
