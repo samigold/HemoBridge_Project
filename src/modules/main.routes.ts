@@ -1,6 +1,5 @@
 import express from 'express';
 import HealthCareFacilityRouter from './health-care-facility/health-care-facility.routes';
-import UserManagementRouter from './user/module.routes';
 import UserModuleRouter from './user/module.routes';
 
 const BaseRouter = express.Router();
