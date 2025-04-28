@@ -82,7 +82,6 @@ export const UserService = {
 }
 
 eventBus.on(FACILITY_EVENTS.CREATED, async (facilityPayload: FacilityCreatedEvent) => {
-    console.log("facility created, time to create it's demo staff")
     const newUser = await UserService.create({
         email: facilityPayload.personnel.email,
         phone_number: facilityPayload.personnel.phone_number,
