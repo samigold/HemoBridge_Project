@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { FacilityRecord } from './facility.record';
+import { DonorBloodTypes } from 'src/modules/user/donor/model/donor.record';
 
 const FacilitySchema = new mongoose.Schema<FacilityRecord>({
     name: {
@@ -14,6 +15,10 @@ const FacilitySchema = new mongoose.Schema<FacilityRecord>({
         type: String,
         required: true
     },
+    blood_types: [{
+        type: String,
+        enum: DonorBloodTypes,
+    }],
     created_at: {
         type: Date,
         default: Date.now
