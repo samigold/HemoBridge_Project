@@ -54,7 +54,6 @@ export const FacilityService = {
                 high = inventories.some(item => item.unitsAvailable <= 1) 
                 medium = inventories.some(item => item.unitsAvailable <= 6) 
                 low = inventories.some(item => item.unitsAvailable > 6)
-                console.log(`${facilityRecord.name}: `, inventories)
             }
 
             facilityWithInventoryRecords.push({
@@ -73,7 +72,7 @@ export const FacilityService = {
         return {
             list: facilityWithInventoryRecords,
             currentPage: page,
-            totalPages: total
+            totalPages: Math.ceil(total / pagination.results_per_page)
         }
     },
 
