@@ -61,4 +61,4 @@ const donorSchema = new mongoose.Schema<DonorRecord>({
   }
 });
 
-export const DonorModel = mongoose.model('donor', donorSchema);
+export const DonorModel = mongoose.model('donors', donorSchema);
