@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import { DonationScheduleService } from "./donation-schedule.service";
-import { ValidationError, InternalServerError } from "src/shared/errors";
+import { ValidationError, InternalServerError, NotFoundError } from "src/shared/errors";
 import { FacilityStaffService } from "src/modules/health-care-facility/facility-staff/facility-staff.service";
-import { USER_ROLE } from "src/shared/constants/user-role.enum";
 export const DonationScheduleController = {
     create: async(req: Request, res: Response) => {
         const { 
@@ -99,5 +98,45 @@ export const DonationScheduleController = {
             message: "Donation schedules retrieved successfully",
             data: schedules
         });
-    }
+    },
+
+    approve: async(req: Request, res: Response)=> {
+        const { donationScheduleId } = req.query;
+
+        const foundDonationScheduleRecord = await DonationScheduleService.findById(donationScheduleId as string)
+        .catch(()=> { throw new InternalServerError("") });
+
+        if(!foundDonationScheduleRecord) throw new NotFoundError("Donation schedule not found");
+
+        await DonationScheduleService.approveSchedule(donationScheduleId as string)
+        .catch((error)=> { 
+           if(error) throw error 
+           throw new InternalServerError("")
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "Donation schedule accepted successfully"
+        });
+    },
+
+    decline: async (req: Request, res: Response) => {
+        const { donationScheduleId } = req.query;
+      
+        const foundDonationScheduleRecord = await DonationScheduleService.findById(donationScheduleId as string)
+        .catch(() => { throw new InternalServerError("") });
+      
+        if (!foundDonationScheduleRecord) throw new NotFoundError("Donation schedule not found");
+      
+        await DonationScheduleService.declineSchedule(donationScheduleId as string)
+        .catch((error) => {
+            if (error) throw error;
+            throw new InternalServerError("");
+        });
+      
+        res.status(200).json({
+          success: true,
+          message: "Donation schedule declined successfully",
+        });
+      }
 };
