@@ -1,3 +1,4 @@
+
 # HemoBridge Project
 
 HemoBridge is a comprehensive solution designed to streamline and enhance healthcare management. This project aims to provide an efficient platform for managing patient data, appointments, and medical records.
@@ -12,21 +13,21 @@ HemoBridge is a comprehensive solution designed to streamline and enhance health
 ## Installation
 
 1. Clone the repository:
-        ```bash
-        git clone https://github.com/your-username/HemoBridge_Project.git
-        ```
+    ```bash
+    git clone https://github.com/your-username/HemoBridge_Project.git
+    ```
 2. Navigate to the project directory:
-        ```bash
-        cd HemoBridge_Project
-        ```
+    ```bash
+    cd HemoBridge_Project
+    ```
 3. Install dependencies:
-        ```bash
-        npm install
-        ```
+    ```bash
+    npm install
+    ```
 4. Start the application:
-        ```bash
-        npm start
-        ```
+    ```bash
+    npm start
+    ```
 
 ## Usage
 
@@ -130,27 +131,156 @@ HemoBridge is a comprehensive solution designed to streamline and enhance health
     }
     ```
 
+#### Fetch Current User Profile
+- **URL**: `/profile`
+- **Method**: `GET`
+- **Headers**:
+    ```json
+    {
+        "Authorization": "Bearer <JWT-TOKEN>"
+    }
+    ```
+- **Response**:
+    ```json
+    {
+        "success": true,
+        "data": {
+            "id": "user-id",
+            "email": "user@example.com",
+            "phone_number": "1234567890",
+            "role": "donor",
+            "created_at": "2025-04-13T12:00:00Z",
+            "updated_at": "2025-04-13T12:00:00Z"
+        }
+    }
+    ```
+- **Error (Unauthorized)**:
+    ```json
+    {
+        "success": false,
+        "message": "Unauthorized. Please log in."
+    }
+    ```
 
+### Health Care Facility Routes
+
+#### Create Facility
+- **URL**: `/facility`
+- **Method**: `POST`
+- **Headers**:
+    ```json
+    {
+        "Authorization": "Bearer <JWT-Token>"
+    }
+    ```
+- **Request Body**:
+    ```json
+    {
+        "name": "City Hospital",
+        "address": "789 Pine St",
+        "email": "contact@cityhospital.com",
+        "phoneNumber": "5551234567",
+        "operationalHours": "9 AM - 5 PM"
+    }
+    ```
+- **Response**:
+    ```json
+    {
+        "success": true,
+        "message": "New health care facility created successfully",
+        "data": {
+            "id": "facility-id",
+            "name": "City Hospital",
+            "address": "789 Pine St",
+            "contactInfo": {
+                "email": "contact@cityhospital.com",
+                "phoneNumber": "5551234567"
+            },
+            "operationalHours": "9 AM - 5 PM"
+        }
+    }
+    ```
+
+#### Fetch Facilities (By Id)
+- **URL**: `/facility/:facilityId`
+- **Method**: `GET`
+- **Headers**:
+    ```json
+    {
+        "Authorization": "Bearer <JWT-Token>"
+    }
+    ```
+- **Response**:
+    ```json
+    {
+        "success": true,
+        "message": "Health care facility retrieved successfully",
+        "data": {
+            "id": "facility-id",
+            "name": "City Hospital",
+            "address": "789 Pine St",
+            "contactInfo": {
+                "email": "contact@cityhospital.com",
+                "phoneNumber": "5551234567"
+            },
+            "operationalHours": "9 AM - 5 PM"
+        }
+    }
+    ```
+
+#### Fetch Facilities (Paginated)
+- **URL**: `/facility/:page`
+- **Method**: `GET`
+- **Headers**:
+    ```json
+    {
+        "Authorization": "Bearer <JWT-Token>"
+    }
+    ```
+- **Response**:
+    ```json
+    {
+        "success": true,
+        "message": "Health care facilities retrieved successfully",
+        "data": {
+            "list": [
+                {
+                    "id": "facility-id",
+                    "name": "City Hospital",
+                    "address": "789 Pine St",
+                    "contactInfo": {
+                        "email": "contact@cityhospital.com",
+                        "phoneNumber": "5551234567"
+                    },
+                    "operationalHours": "9 AM - 5 PM"
+                }
+            ],
+            "currentPage": 1,
+            "totalPages": 10
+        }
+    }
+    ```
+
+---
 ## Contributing
 
 Contributions are welcome! Please follow these steps:
 
 1. Fork the repository.
 2. Create a new branch:
-        ```bash
-        git checkout -b feature-name
-        ```
+    ```bash
+    git checkout -b feature-name
+    ```
 3. Commit your changes:
-        ```bash
-        git commit -m "Add feature-name"
-        ```
+    ```bash
+    git commit -m "Add feature-name"
+    ```
 4. Push to the branch:
-        ```bash
-        git push origin feature-name
-        ```
+    ```bash
+    git push origin feature-name
+    ```
 5. Open a pull request.
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
 This project is licensed under the [MIT License](LICENSE).
