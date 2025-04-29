@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { DonationScheduleService } from "./donation-schedule.service";
 import { ValidationError, InternalServerError } from "src/shared/errors";
-
+import { FacilityStaffService } from "src/modules/health-care-facility/facility-staff/facility-staff.service";
+import { USER_ROLE } from "src/shared/constants/user-role.enum";
 export const DonationScheduleController = {
     create: async(req: Request, res: Response) => {
         const { 
@@ -53,6 +54,50 @@ export const DonationScheduleController = {
             success: true,
             message: "Donation schedule created successfully", 
             data: schedule
+        });
+    },
+
+    fetchDonorSchedules: async(req: Request, res: Response) => {
+        const { page } = req.query;
+        const { id } = req.user!; // from auth middleware
+
+        const schedules = await DonationScheduleService.findByDonorId(
+            id,
+            Number(page) || 1
+        );
+
+        res.status(200).json({
+            success: true,
+            message: "Donation schedules retrieved successfully",
+            data: schedules
+        });
+    },
+
+    fetchFacilitySchedules: async(req: Request, res: Response) => {
+        const { page } = req.query;
+        const { id } = req.user!; // from auth middleware
+
+        // Get facility ID for staff member
+        const staffProfile = await FacilityStaffService.getByUserId(id)
+        .catch(error => {
+            console.error("Error finding facility staff profile:", error);
+            throw new InternalServerError("Error retrieving facility information");
+        });
+
+        if (!staffProfile) {
+            throw new ValidationError("Invalid facility staff profile");
+        }
+
+        const schedules = await DonationScheduleService.findByFacilityId(staffProfile.facilityId, Number(page) || 1)
+        .catch(error => {
+            console.error("Error finding facility donation schedules :", error);
+            throw new InternalServerError("Error retrieving facility donation schedules");
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "Donation schedules retrieved successfully",
+            data: schedules
         });
     }
 };
