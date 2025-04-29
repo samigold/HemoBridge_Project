@@ -19,7 +19,7 @@ export const SessionService = {
 
         const result = await SessionModel.findOneAndUpdate(query, update)
         .catch((error)=> { 
-            console.log("There was an error updating session tokens: ", error);
+            console.error("There was an error updating session tokens: ", error);
             throw error
         })
 

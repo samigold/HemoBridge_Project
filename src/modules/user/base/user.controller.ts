@@ -6,10 +6,11 @@ import { USER_ROLE } from "src/shared/constants/user-role.enum";
 import { ConflictError, InternalServerError, NotFoundError, ValidationError } from "src/shared/errors";
 import { DonorBloodTypes } from "../donor/model/donor.record";
 import { FacilityService } from "src/modules/health-care-facility/base/facility.service";
+import { SessionService } from "../auth/session/session.service";
 
 export const UserController = {
     registerDonor: async (req: Request, res: Response) => {
-        console.log(req.body)
+
         const { firstName, lastName, email, password, phoneNumber, bloodType, address } = req.body;
 
         if (!firstName || !lastName || !email || !password || !phoneNumber || !bloodType || !address) {
@@ -47,8 +48,9 @@ export const UserController = {
             phone_number: phoneNumber,
             role: USER_ROLE.DONOR,
         });
-        
-        delete createdUserEntity.passwordHash
+
+        await authenticateUser(createdUserEntity.id, res)
+        .catch(()=> { throw new InternalServerError("") })
         
         res.status(201).json({
             success: true,
@@ -90,6 +92,11 @@ export const UserController = {
             address: address,
             role: USER_ROLE.CARE_GIVER,
         });
+
+        delete createdUserEntity.passwordHash
+
+        await authenticateUser(createdUserEntity.id, res)
+        .catch(()=> { throw new InternalServerError("") })
 
         res.status(201).json({
             success: true,
@@ -140,6 +147,9 @@ export const UserController = {
         });
         
         delete createdUserEntity.passwordHash
+
+        await authenticateUser(createdUserEntity.id, res)
+        .catch(()=> { throw new InternalServerError("") })
         
         res.status(201).json({
             success: true,
@@ -181,11 +191,23 @@ export const UserController = {
         });
         
         delete createdUserEntity.passwordHash
+
+        await authenticateUser(createdUserEntity.id, res)
+        .catch(()=> { throw new InternalServerError("") })
         
         res.status(201).json({
             success: true,
             message: "New admin user created successfully"
         });
     },
+}
+
+async function authenticateUser(userId: string, res: Response) {
+    const newSession = await SessionService.add(userId)
+    .catch(()=> { throw new InternalServerError("") })
+    
+    if(!newSession) throw new NotFoundError("Invalid email and password match");
+                
+    res.cookie('session-id', newSession.accessToken, { httpOnly: true });
 }
 
