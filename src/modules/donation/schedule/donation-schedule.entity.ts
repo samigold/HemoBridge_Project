@@ -2,10 +2,15 @@ import { Types } from "mongoose";
 import { DonorBloodTypes } from "src/modules/user/donor/model/donor.record";
 import { DonationScheduleRecord, DonationScheduleStatus } from "./model/donation-schedule.record";
 
+interface PopulatedDonor {
+    firstName: string;
+    lastName: string;
+}
+
 export interface DonationScheduleEntity {
     _id?: Types.ObjectId;
     id?: string;
-    donorId: string;
+    donorId: string | PopulatedDonor;
     facilityId: string;
     bloodType: DonorBloodTypes;
     unitsRequested: number;
@@ -18,9 +23,15 @@ export interface DonationScheduleEntity {
 
 export const DonationScheduleEntity = {
     fromRecord(record: DonationScheduleRecord): DonationScheduleEntity {
+        console.log(record)
+        const donor = typeof record.donor_id === 'string' ? record.donor_id : {
+            firstName: record.donor_id.first_name!,
+            lastName: record.donor_id.last_name!
+        };
+
         return {
             id: record.id,
-            donorId: record.donor_id,
+            donorId: donor,
             facilityId: record.facility_id,
             bloodType: record.blood_type,
             unitsRequested: record.units_requested,
