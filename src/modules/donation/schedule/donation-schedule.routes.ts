@@ -12,5 +12,7 @@ DonationScheduleRouter.post('/', validateSession, validateAccess(USER_ROLE.DONOR
 
 // Facility routes
 DonationScheduleRouter.get('/facility', validateSession, validateAccess(USER_ROLE.FACILITY_STAFF), DonationScheduleController.fetchFacilitySchedules);
+DonationScheduleRouter.post('/accept', validateSession, validateAccess(USER_ROLE.FACILITY_STAFF), DonationScheduleController.approve);
+DonationScheduleRouter.post('/decline', validateSession, validateAccess(USER_ROLE.FACILITY_STAFF), DonationScheduleController.decline);
 
 export default DonationScheduleRouter;
