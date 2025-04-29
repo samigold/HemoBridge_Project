@@ -1,7 +1,8 @@
 import { PaginationUtils } from "src/shared/utils/pagination.utils";
 import { DonationScheduleEntity } from "./donation-schedule.entity";
 import { DonationScheduleModel } from "./model/donation-schedule.model";
-import { InternalServerError } from "src/shared/errors";
+import { InternalServerError, NotFoundError, ValidationError } from "src/shared/errors";
+import { DonationScheduleStatus } from "./model/donation-schedule.record";
 
 export const DonationScheduleService = {
     create: async (scheduleData: Omit<DonationScheduleEntity, '_id' | 'id' | 'status' | 'createdAt' | 'updatedAt'>) => {
@@ -70,5 +71,58 @@ export const DonationScheduleService = {
             currentPage: page,
             totalPages: Math.ceil(total / pagination.results_per_page)
         };
+    },
+
+    findById: async(id: string) => {
+        const schedule = await DonationScheduleModel.findById(id)
+        .populate({
+            path: 'donor_id',
+            select: 'first_name last_name'
+        })
+        .catch((error)=> {
+            console.error("Error fetching donor donation schedule by id:", error);
+            throw new InternalServerError("Failed to fetch donation schedule by id");
+        });
+
+        if(!schedule) return null
+
+        return DonationScheduleEntity.fromRecord(schedule);
+    },
+
+    approveSchedule: async(scheduleId: string)=> {
+        const schedule = await DonationScheduleModel.findById(scheduleId);
+        
+        if (!schedule) throw new NotFoundError('Donation schedule not found.');
+    
+        if (schedule.status !== 'PENDING') {
+          throw new ValidationError(`Cannot approve a donation schedule with status: ${schedule.status}`);
+        }
+        
+        const filter = { _id: scheduleId }
+        const updateObj = { status: DonationScheduleStatus.APPROVED }
+        return await DonationScheduleModel.findByIdAndUpdate(filter, updateObj)
+        .catch((error)=> {
+            console.error("There was an error approving donation schedule: ", error);
+            throw new InternalServerError("");
+        })
+    },
+
+    declineSchedule: async (scheduleId: string) => {
+        const schedule = await DonationScheduleModel.findById(scheduleId);
+      
+        if (!schedule) throw new NotFoundError('Donation schedule not found.');
+      
+        if (schedule.status !== 'PENDING') {
+          throw new ValidationError(`Cannot decline a donation schedule with status: ${schedule.status}`);
+        }
+      
+        const filter = { _id: scheduleId };
+        const updateObj = { status: DonationScheduleStatus.REJECTED };
+      
+        return await DonationScheduleModel.findByIdAndUpdate(filter, updateObj)
+        .catch((error) => {
+            console.error("There was an error declining donation schedule: ", error);
+            throw new InternalServerError("");
+        });
     }
 }
