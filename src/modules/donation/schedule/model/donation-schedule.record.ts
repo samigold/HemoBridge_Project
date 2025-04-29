@@ -1,10 +1,11 @@
 import { Types } from "mongoose";
-import { DonorBloodTypes } from "src/modules/user/donor/model/donor.record";
+import { FacilityRecord } from "src/modules/health-care-facility/base/model/facility.record";
+import { DonorBloodTypes, DonorRecord } from "src/modules/user/donor/model/donor.record";
 
 export interface DonationScheduleRecord {
     _id?: Types.ObjectId;
     id?: string;
-    donor_id: string;
+    donor_id: string | Partial<DonorRecord>;
     facility_id: string;
     blood_type: DonorBloodTypes;
     units_requested: number;

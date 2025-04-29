@@ -5,7 +5,7 @@ import { DonorBloodTypes } from 'src/modules/user/donor/model/donor.record';
 const DonationScheduleSchema = new mongoose.Schema<DonationScheduleRecord>({
     donor_id: {
         type: String,
-        ref: "users",
+        ref: "donors",
         required: true
     },
     facility_id: {
