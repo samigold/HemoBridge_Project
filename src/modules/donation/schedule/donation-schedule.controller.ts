@@ -101,7 +101,9 @@ export const DonationScheduleController = {
     },
 
     approve: async(req: Request, res: Response)=> {
-        const { donationScheduleId } = req.query;
+        const { donationScheduleId } = req.params;
+
+        if(!donationScheduleId) throw new ValidationError("Invalid donation schedule id");
 
         const foundDonationScheduleRecord = await DonationScheduleService.findById(donationScheduleId as string)
         .catch(()=> { throw new InternalServerError("") });
@@ -121,14 +123,14 @@ export const DonationScheduleController = {
     },
 
     decline: async (req: Request, res: Response) => {
-        const { donationScheduleId } = req.query;
+        const { donationScheduleId } = req.params;
       
         const foundDonationScheduleRecord = await DonationScheduleService.findById(donationScheduleId as string)
         .catch(() => { throw new InternalServerError("") });
       
         if (!foundDonationScheduleRecord) throw new NotFoundError("Donation schedule not found");
       
-        await DonationScheduleService.declineSchedule(donationScheduleId as string)
+        const update = await DonationScheduleService.declineSchedule(donationScheduleId as string)
         .catch((error) => {
             if (error) throw error;
             throw new InternalServerError("");
@@ -136,7 +138,7 @@ export const DonationScheduleController = {
       
         res.status(200).json({
           success: true,
-          message: "Donation schedule declined successfully",
+          message: `Donation schedule ${update.status.toLowerCase()} successfully`,
         });
       }
 };

@@ -27,17 +27,17 @@ export const DonationScheduleService = {
         const pagination = PaginationUtils.calculatePage(page);
 
         const schedules = await DonationScheduleModel.find({ facility_id: facilityId })
-            .populate({
-                path: 'donor_id',
-                select: 'first_name last_name'
-            })
-            .skip(pagination.list_offset)
-            .limit(pagination.results_per_page)
-            .sort({ created_at: "desc" })
-            .catch((error)=> {
-                console.error("Error fetching facility donation schedules:", error);
-                throw new InternalServerError("Failed to fetch donation schedules");
-            });
+        .populate({
+            path: 'donor_id',
+            select: 'first_name last_name'
+        })
+        .skip(pagination.list_offset)
+        .limit(pagination.results_per_page)
+        .sort({ created_at: "desc" })
+        .catch((error)=> {
+            console.error("Error fetching facility donation schedules:", error);
+            throw new InternalServerError("Failed to fetch donation schedules");
+        });
 
         const total = await DonationScheduleModel.countDocuments({ facility_id: facilityId });
 
@@ -94,7 +94,7 @@ export const DonationScheduleService = {
         
         if (!schedule) throw new NotFoundError('Donation schedule not found.');
     
-        if (schedule.status !== 'PENDING') {
+        if (schedule.status !== DonationScheduleStatus.PENDING) {
           throw new ValidationError(`Cannot approve a donation schedule with status: ${schedule.status}`);
         }
         
@@ -112,17 +112,25 @@ export const DonationScheduleService = {
       
         if (!schedule) throw new NotFoundError('Donation schedule not found.');
       
-        if (schedule.status !== 'PENDING') {
+        if (schedule.status !== DonationScheduleStatus.PENDING) {
           throw new ValidationError(`Cannot decline a donation schedule with status: ${schedule.status}`);
         }
       
         const filter = { _id: scheduleId };
-        const updateObj = { status: DonationScheduleStatus.REJECTED };
+        const updateObj = { 
+            status: schedule.status === DonationScheduleStatus.PENDING
+                    ?   DonationScheduleStatus.REJECTED 
+                    :   DonationScheduleStatus.CANCELLED
+        };
       
-        return await DonationScheduleModel.findByIdAndUpdate(filter, updateObj)
+        const updatedRecord = await DonationScheduleModel.findByIdAndUpdate(filter, updateObj)
         .catch((error) => {
             console.error("There was an error declining donation schedule: ", error);
             throw new InternalServerError("");
         });
+        
+        if(!updatedRecord) throw new InternalServerError("");
+        
+        return DonationScheduleEntity.fromRecord(updatedRecord)
     }
 }

@@ -23,7 +23,6 @@ export interface DonationScheduleEntity {
 
 export const DonationScheduleEntity = {
     fromRecord(record: DonationScheduleRecord): DonationScheduleEntity {
-        console.log(record)
         const donor = typeof record.donor_id === 'string' ? record.donor_id : {
             firstName: record.donor_id.first_name!,
             lastName: record.donor_id.last_name!
