@@ -160,7 +160,7 @@ export const DonationScheduleService = {
         if(!record) throw new NotFoundError("There was an error ");
 
         return DonationScheduleEntity.fromRecord(record)
-    } 
+    },
 
     completeSchedule: async (scheduleId: string) => {
         const schedule = await DonationScheduleModel.findById(scheduleId);
