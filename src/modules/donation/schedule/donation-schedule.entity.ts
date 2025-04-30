@@ -42,7 +42,7 @@ export const DonationScheduleEntity = {
             unitsRequested: record.units_requested,
             additionalNotes: record.additional_notes,
             preferredDate: record.preferred_date,
-            urgencyLevel: record.urgency_level,
+            urgencyLevel: record?.urgency_level,
             status: record.status,
             createdAt: record.created_at,
             updatedAt: record.updated_at
