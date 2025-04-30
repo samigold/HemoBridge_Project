@@ -15,6 +15,7 @@ DonationScheduleRouter.post('/', validateSession, validateAccess(USER_ROLE.DONOR
 DonationScheduleRouter.get('/facility', validateSession, validateAccess(USER_ROLE.FACILITY_STAFF), DonationScheduleController.fetchFacilitySchedules);
 DonationScheduleRouter.post('/:donationScheduleId/approve', validateSession, validateAccess(USER_ROLE.FACILITY_STAFF), DonationScheduleController.approve);
 DonationScheduleRouter.post('/:donationScheduleId/decline', validateSession, validateAccess(USER_ROLE.FACILITY_STAFF), DonationScheduleController.decline);
+DonationScheduleRouter.post('/:donationScheduleId/complete', validateSession, validateAccess(USER_ROLE.FACILITY_STAFF), DonationScheduleController.complete);
 
 applyAsyncHandler(DonationScheduleRouter);
 export default DonationScheduleRouter;

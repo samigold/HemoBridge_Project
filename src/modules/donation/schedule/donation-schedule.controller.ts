@@ -140,5 +140,28 @@ export const DonationScheduleController = {
           success: true,
           message: `Donation schedule ${update.status.toLowerCase()} successfully`,
         });
-      }
+      },
+
+      complete: async(req: Request, res: Response) => {
+        const { donationScheduleId } = req.params;
+
+        if(!donationScheduleId) throw new ValidationError("Invalid donation schedule id");
+
+        const foundDonationScheduleRecord = await DonationScheduleService.findById(donationScheduleId as string)
+        .catch(()=>{ throw new InternalServerError("Error finding donation schedule") });
+
+        if(!foundDonationScheduleRecord) throw new NotFoundError("Donation schedule not found");
+
+        const updatedSchedule = await DonationScheduleService.completeSchedule(donationScheduleId as string)
+        .catch((error)=> {
+            if(error) throw error;
+            throw new InternalServerError("Error completing donation schedule")
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "Donation schedule completed successfully",
+            data: updatedSchedule
+        });
+      },
 };
