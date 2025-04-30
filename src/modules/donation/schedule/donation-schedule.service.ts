@@ -113,9 +113,9 @@ export const DonationScheduleService = {
       
         if (!schedule) throw new NotFoundError('Donation schedule not found.');
       
-        if (schedule.status !== DonationScheduleStatus.PENDING) {
-          throw new ValidationError(`Cannot decline a donation schedule with status: ${schedule.status}`);
-        }
+        // if (schedule.status !== DonationScheduleStatus.PENDING) {
+        //   throw new ValidationError(`Cannot decline a donation schedule with status: ${schedule.status}`);
+        // }
       
         const filter = { _id: scheduleId };
         const updateObj = { 
@@ -133,5 +133,31 @@ export const DonationScheduleService = {
         if(!updatedRecord) throw new InternalServerError("");
         
         return DonationScheduleEntity.fromRecord(updatedRecord)
-    }
+    },
+
+    assignDonor: async(scheduleId: string, userId: string)=> {
+        const schedule = await DonationScheduleModel.findById(scheduleId)
+        .catch((error)=> {
+            console.error("There was an error assigning donor to this donation request : ", error);
+            throw new InternalServerError("");
+        })
+        
+        if (!schedule) throw new NotFoundError('Donation schedule not found.');
+    
+        if (schedule.status === DonationScheduleStatus.APPROVED) {
+          throw new ValidationError(`Donation request already has a donor`);
+        }
+        
+        const filter = { _id: scheduleId }
+        const updateObj = { donorId: userId }
+        const record =  await DonationScheduleModel.findByIdAndUpdate(filter, updateObj)
+        .catch((error)=> {
+            console.error("There was an error assigning donor to this donation request : ", error);
+            throw new InternalServerError("");
+        })
+
+        if(!record) throw new NotFoundError("There was an error ");
+
+        return DonationScheduleEntity.fromRecord(record)
+    } 
 }

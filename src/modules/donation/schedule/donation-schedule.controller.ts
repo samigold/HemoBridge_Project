@@ -151,8 +151,24 @@ export const DonationScheduleController = {
         });
       
         res.status(200).json({
-          success: true,
-          message: `Donation schedule ${update.status.toLowerCase()} successfully`,
+            success: true,
+            message: `Donation schedule ${update.status.toLowerCase()} successfully`,
         });
-      }
+    },
+
+    assignDonor: async(req: Request, res: Response)=> {
+        const { donationScheduleId } = req.params;
+      
+        const update = await DonationScheduleService.assignDonor(donationScheduleId as string, req.user!.id)
+        .catch((error) => {
+            if (error) throw error;
+            throw new InternalServerError("");
+        });
+      
+        res.status(200).json({
+            success: true,
+            message: `Assigned to donation schedule request successfully`,
+            data: update
+        });
+    }
 };

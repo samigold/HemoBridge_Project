@@ -10,6 +10,7 @@ const DonationScheduleRouter = express.Router();
 // Donor routes
 DonationScheduleRouter.get('/donor', validateSession, validateAccess(USER_ROLE.DONOR), DonationScheduleController.fetchDonorSchedules);
 DonationScheduleRouter.post('/', validateSession, validateAccess(USER_ROLE.DONOR, USER_ROLE.FACILITY_STAFF), DonationScheduleController.create);
+DonationScheduleRouter.patch('/:donationScheduleId/assign', validateSession, validateAccess(USER_ROLE.DONOR), DonationScheduleController.assignDonor);
 
 // Facility routes
 DonationScheduleRouter.get('/facility', validateSession, validateAccess(USER_ROLE.FACILITY_STAFF), DonationScheduleController.fetchFacilitySchedules);
