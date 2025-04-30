@@ -45,7 +45,7 @@ export const DonationScheduleService = {
             throw new InternalServerError("Failed to fetch donation schedules");
         });
 
-        const total = await DonationScheduleModel.countDocuments({ facility_id: facilityId });
+        const total = await DonationScheduleModel.countDocuments(query);
 
         return {
             list: schedules.map(schedule => DonationScheduleEntity.fromRecord(schedule)),
@@ -58,9 +58,12 @@ export const DonationScheduleService = {
         const pagination = PaginationUtils.calculatePage(page);
         
         let query:any = {};
-        query.donor_id = donorId;
         if(status) query.status = status
-
+        // if the client wants a list of pending schedules 
+        // it translates to schedules without an assigned donor,
+        // only query by donor id if the status is anything but pending
+        if(status !== DonationScheduleStatus.PENDING) query.donor_id = donorId;
+console.log(query)
         const schedules = await DonationScheduleModel.find(query)
             .populate({
                 path: 'donor_id',
@@ -74,7 +77,7 @@ export const DonationScheduleService = {
                 throw new InternalServerError("Failed to fetch donation schedules");
             });
 
-        const total = await DonationScheduleModel.countDocuments({ donor_id: donorId });
+        const total = await DonationScheduleModel.countDocuments(query);
 
         return {
             list: schedules.map(schedule => DonationScheduleEntity.fromRecord(schedule)),
