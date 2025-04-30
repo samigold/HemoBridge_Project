@@ -12,7 +12,8 @@ export const DonationScheduleService = {
             blood_type: scheduleData.bloodType,
             units_requested: scheduleData.unitsRequested,
             preferred_date: scheduleData.preferredDate,
-            additional_notes: scheduleData.additionalNotes
+            additional_notes: scheduleData.additionalNotes,
+            urgency_level: scheduleData.urgencyLevel?.toLowerCase() ?? "low"
 
         })
         .catch((error)=> {

@@ -2,21 +2,34 @@ import { Request, Response } from "express";
 import { DonationScheduleService } from "./donation-schedule.service";
 import { ValidationError, InternalServerError, NotFoundError } from "src/shared/errors";
 import { FacilityStaffService } from "src/modules/health-care-facility/facility-staff/facility-staff.service";
+import { USER_ROLE } from "src/shared/constants/user-role.enum";
 export const DonationScheduleController = {
     create: async(req: Request, res: Response) => {
-        const { 
+        let { 
             donorId,
             facilityId,
             bloodType,
             unitsRequested,
             additionalNotes,
-            preferredDate
+            preferredDate,
+            urgencyLevel
             
         } = req.body;
 
-        // Validate required fields
-        if(!donorId || !facilityId || !bloodType || !preferredDate) {
-            throw new ValidationError("Required fields missing");
+        if(req.user!.role === USER_ROLE.DONOR) {
+            // Validate required fields
+            if(!donorId || !facilityId || !bloodType || !preferredDate) {
+                throw new ValidationError("Required fields missing");
+            }
+        }
+
+        if(req.user!.role === USER_ROLE.FACILITY_STAFF) {
+            // Validate required fields
+            if(!bloodType || !preferredDate) {
+                throw new ValidationError("Required fields missing");
+            }
+
+            facilityId = req.user!.id
         }
 
         // Clean and validate date format
@@ -42,7 +55,8 @@ export const DonationScheduleController = {
             bloodType,
             unitsRequested: unitsRequested || 1,
             additionalNotes,
-            preferredDate: dateObj
+            preferredDate: dateObj,
+            urgencyLevel
 
         }).catch((error)=> {
             console.error("Error creating donation schedule:", error);

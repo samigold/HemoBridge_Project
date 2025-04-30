@@ -1,12 +1,11 @@
 import mongoose from 'mongoose';
-import { DonationScheduleRecord, DonationScheduleStatus } from './donation-schedule.record';
+import { DonationScheduleRecord, DonationScheduleStatus, DonationScheduleUrgency } from './donation-schedule.record';
 import { DonorBloodTypes } from 'src/modules/user/donor/model/donor.record';
 
 const DonationScheduleSchema = new mongoose.Schema<DonationScheduleRecord>({
     donor_id: {
         type: String,
-        ref: "donors",
-        required: true
+        ref: "donors"
     },
     facility_id: {
         type: String,
@@ -27,6 +26,11 @@ const DonationScheduleSchema = new mongoose.Schema<DonationScheduleRecord>({
     },
     preferred_date: {
         type: Date,
+        required: true
+    },
+    urgency_level: {
+        type: String,
+        enum: DonationScheduleUrgency,
         required: true
     },
     status: {
