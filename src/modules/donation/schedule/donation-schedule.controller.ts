@@ -3,6 +3,8 @@ import { DonationScheduleService } from "./donation-schedule.service";
 import { ValidationError, InternalServerError, NotFoundError } from "src/shared/errors";
 import { FacilityStaffService } from "src/modules/health-care-facility/facility-staff/facility-staff.service";
 import { USER_ROLE } from "src/shared/constants/user-role.enum";
+import { DonationScheduleStatus } from "./model/donation-schedule.record";
+
 export const DonationScheduleController = {
     create: async(req: Request, res: Response) => {
         let { 
@@ -71,12 +73,19 @@ export const DonationScheduleController = {
     },
 
     fetchDonorSchedules: async(req: Request, res: Response) => {
-        const { page } = req.query;
+        const { page, status } = req.query;
         const { id } = req.user!; // from auth middleware
+
+        const requestStatus = status as DonationScheduleStatus
+
+        if(requestStatus &&!Object.values(DonationScheduleStatus).includes(requestStatus)) {
+            throw new ValidationError("Invalid donation schedule stats");
+        }
 
         const schedules = await DonationScheduleService.findByDonorId(
             id,
-            Number(page) || 1
+            Number(page) || 1,
+            requestStatus
         );
 
         res.status(200).json({
@@ -170,9 +179,9 @@ export const DonationScheduleController = {
             message: `Assigned to donation schedule request successfully`,
             data: update
         });
-      },
+    },
 
-      complete: async(req: Request, res: Response) => {
+    complete: async(req: Request, res: Response) => {
         const { donationScheduleId } = req.params;
 
         if(!donationScheduleId) throw new ValidationError("Invalid donation schedule id");
@@ -193,5 +202,5 @@ export const DonationScheduleController = {
             message: "Donation schedule completed successfully",
             data: updatedSchedule
         });
-      },
+    },
 };

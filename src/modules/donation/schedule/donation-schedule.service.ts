@@ -25,10 +25,14 @@ export const DonationScheduleService = {
         return DonationScheduleEntity.fromRecord(schedule);
     },
 
-    findByFacilityId: async(facilityId: string, page: number = 1) => {
+    findByFacilityId: async(facilityId: string, page: number = 1, status?: DonationScheduleStatus) => {
         const pagination = PaginationUtils.calculatePage(page);
 
-        const schedules = await DonationScheduleModel.find({ facility_id: facilityId })
+        let query:any = {};
+        query.facility_id = facilityId;
+        if(status) query.status = status
+
+        const schedules = await DonationScheduleModel.find(query)
         .populate({
             path: 'donor_id',
             select: 'first_name last_name'
@@ -50,10 +54,14 @@ export const DonationScheduleService = {
         };
     },
 
-    findByDonorId: async(donorId: string, page: number = 1) => {
+    findByDonorId: async(donorId: string, page: number = 1, status?: DonationScheduleStatus) => {
         const pagination = PaginationUtils.calculatePage(page);
+        
+        let query:any = {};
+        query.donor_id = donorId;
+        if(status) query.status = status
 
-        const schedules = await DonationScheduleModel.find({ donor_id: donorId })
+        const schedules = await DonationScheduleModel.find(query)
             .populate({
                 path: 'donor_id',
                 select: 'first_name last_name'
