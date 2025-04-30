@@ -2,6 +2,7 @@ import { InternalServerError } from "src/shared/errors"
 import { ICreateBloodInventory } from "./blood-inventory.types"
 import { BloodInventoryModel } from "./model/blood-inventory.model"
 import { BloodInventoryEntity } from "./blood-inventory.entity"
+import { DonorBloodTypes } from "src/modules/user/donor/model/donor.record"
 
 export const BloodInventoryService = {
     findAll: async () => {
@@ -37,5 +38,30 @@ export const BloodInventoryService = {
         })
 
         return BloodInventoryEntity.fromRecord(createdRecord);
-    }
+    },
+
+    findByFacilityIdAndBloodType: async (facilityId: string, bloodType: DonorBloodTypes)=> {
+        const inventory = await BloodInventoryModel.findOne({ facility_id: facilityId, blood_type: bloodType })
+        .catch((error)=> {
+            console.error("There was an error finding blood inventory record: ", error);
+            throw new InternalServerError("Failed to fetch blood inventory record")
+        });
+
+        return inventory ? BloodInventoryEntity.fromRecord(inventory) : null;
+    },
+
+    updateInventory: async (inventory: {
+        id: string,
+        facilityId: string,
+        bloodType: DonorBloodTypes,
+        unitsAvailable: number
+    })=> {
+        const updatedInventory = await BloodInventoryModel.findByIdAndUpdate(inventory.id, { units_available: inventory.unitsAvailable })
+        .catch((error)=> {
+            console.error("There was an error updating blood inventory record: ", error);
+            throw new InternalServerError("Failed to update blood inventory record")
+        })
+
+        return BloodInventoryEntity.fromRecord(updatedInventory!);
+    },
 }

@@ -3,6 +3,7 @@ import { DonationScheduleEntity } from "./donation-schedule.entity";
 import { DonationScheduleModel } from "./model/donation-schedule.model";
 import { InternalServerError, NotFoundError, ValidationError } from "src/shared/errors";
 import { DonationScheduleStatus } from "./model/donation-schedule.record";
+import { BloodInventoryService } from "src/modules/health-care-facility/blood-inventory/blood-inventory.service";
 
 export const DonationScheduleService = {
     create: async (scheduleData: Omit<DonationScheduleEntity, '_id' | 'id' | 'status' | 'createdAt' | 'updatedAt'>) => {
@@ -160,4 +161,56 @@ export const DonationScheduleService = {
 
         return DonationScheduleEntity.fromRecord(record)
     } 
+
+    completeSchedule: async (scheduleId: string) => {
+        const schedule = await DonationScheduleModel.findById(scheduleId);
+
+        if (!schedule) throw new NotFoundError('Donation schedule not found.');
+
+        if (schedule.status !== DonationScheduleStatus.APPROVED){
+            throw new ValidationError(`Cannot complete a donation schedule with status: ${schedule.status}. Only Approved schedules can be completed.`);
+        }
+
+        const filter = { _id: scheduleId };
+        const updateObj = { status: DonationScheduleStatus.COMPLETED };
+
+        const updatedRecord = await DonationScheduleModel.findByIdAndUpdate(filter, updateObj)
+        .catch((error) => {
+            console.error("There was an error completing donation schedule: ", error);
+            throw new InternalServerError("Failed to complete donation schedule");
+        });
+
+        if(!updatedRecord) throw new InternalServerError("Failed to complete donation schedule");
+
+        //update Blood inventory
+        try {
+            // Find the blood inventory record for the facility and blood type
+            const inventoryRecord = await BloodInventoryService.findByFacilityIdAndBloodType(
+                schedule.facility_id.toString(),
+                schedule.blood_type
+            );
+
+            if(inventoryRecord) {
+                //Update existing blood inventory record
+                await BloodInventoryService.updateInventory({
+                    id: inventoryRecord.id,
+                    facilityId: schedule.facility_id.toString(),
+                    bloodType: schedule.blood_type,
+                    unitsAvailable: inventoryRecord.unitsAvailable + schedule.units_requested
+                });
+            } else {
+                //Create new blood inventory record
+                await BloodInventoryService.create({
+                    facilityId: schedule.facility_id.toString(),
+                    bloodType: schedule.blood_type,
+                    unitsAvailable: schedule.units_requested
+                });
+            }
+        } catch (error) {
+            console.error("Error updating blood inventory: ", error);
+        }
+
+        return DonationScheduleEntity.fromRecord(updatedRecord);
+
+    }
 }
