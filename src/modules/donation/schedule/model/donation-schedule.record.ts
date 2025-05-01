@@ -6,7 +6,7 @@ export interface DonationScheduleRecord {
     _id?: Types.ObjectId;
     id?: string;
     donor_id: string | Partial<DonorRecord>;
-    facility_id: string;
+    facility_id: string | Partial<FacilityRecord>;
     blood_type: DonorBloodTypes;
     units_requested: number;
     additional_notes?: string;
