@@ -14,7 +14,8 @@ export const ProfileController = {
 
         res.status(200).json({
             status: "SUCCESS",
-            data: profile
+            data: profile,
+            role: user.role
         });
     }
 }

@@ -56,7 +56,7 @@ export const BloodInventoryService = {
         bloodType: DonorBloodTypes,
         unitsAvailable: number
     })=> {
-        const updatedInventory = await BloodInventoryModel.findByIdAndUpdate(inventory.id, { units_available: inventory.unitsAvailable })
+        const updatedInventory = await BloodInventoryModel.findByIdAndUpdate(inventory.id, { units_available: inventory.unitsAvailable }, { new: true })
         .catch((error)=> {
             console.error("There was an error updating blood inventory record: ", error);
             throw new InternalServerError("Failed to update blood inventory record")

@@ -117,7 +117,7 @@ export const DonationScheduleService = {
         
         const filter = { _id: scheduleId }
         const updateObj = { status: DonationScheduleStatus.APPROVED }
-        return await DonationScheduleModel.findByIdAndUpdate(filter, updateObj)
+        return await DonationScheduleModel.findByIdAndUpdate(filter, updateObj, { new: true })
         .catch((error)=> {
             console.error("There was an error approving donation schedule: ", error);
             throw new InternalServerError("");
@@ -140,7 +140,7 @@ export const DonationScheduleService = {
                     :   DonationScheduleStatus.CANCELLED
         };
       
-        const updatedRecord = await DonationScheduleModel.findByIdAndUpdate(filter, updateObj)
+        const updatedRecord = await DonationScheduleModel.findByIdAndUpdate(filter, updateObj, { new: true })
         .catch((error) => {
             console.error("There was an error declining donation schedule: ", error);
             throw new InternalServerError("");
@@ -196,7 +196,7 @@ export const DonationScheduleService = {
         const filter = { _id: scheduleId };
         const updateObj = { status: DonationScheduleStatus.COMPLETED };
 
-        const updatedRecord = await DonationScheduleModel.findByIdAndUpdate(filter, updateObj)
+        const updatedRecord = await DonationScheduleModel.findByIdAndUpdate(filter, updateObj, { new: true })
         .catch((error) => {
             console.error("There was an error completing donation schedule: ", error);
             throw new InternalServerError("Failed to complete donation schedule");
