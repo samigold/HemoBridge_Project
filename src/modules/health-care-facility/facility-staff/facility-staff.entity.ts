@@ -12,9 +12,7 @@ export interface FacilityStaffEntity {
     phoneNumber: string;
     createdAt: Date;
     updatedAt: Date;
-    // Adding these properties to fix TypeScript errors
     facilityName?: string;
-    staffName?: string;
 }
 
 export const FacilityStaffEntity = {
