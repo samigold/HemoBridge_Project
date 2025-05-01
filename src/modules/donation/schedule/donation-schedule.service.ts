@@ -25,10 +25,14 @@ export const DonationScheduleService = {
         return DonationScheduleEntity.fromRecord(schedule);
     },
 
-    findByFacilityId: async(facilityId: string, page: number = 1) => {
+    findByFacilityId: async(facilityId: string, page: number = 1, status?: DonationScheduleStatus) => {
         const pagination = PaginationUtils.calculatePage(page);
 
-        const schedules = await DonationScheduleModel.find({ facility_id: facilityId })
+        let query:any = {};
+        query.facility_id = facilityId;
+        if(status) query.status = status
+
+        const schedules = await DonationScheduleModel.find(query)
         .populate({
             path: 'donor_id',
             select: 'first_name last_name'
@@ -41,7 +45,7 @@ export const DonationScheduleService = {
             throw new InternalServerError("Failed to fetch donation schedules");
         });
 
-        const total = await DonationScheduleModel.countDocuments({ facility_id: facilityId });
+        const total = await DonationScheduleModel.countDocuments(query);
 
         return {
             list: schedules.map(schedule => DonationScheduleEntity.fromRecord(schedule)),
@@ -50,13 +54,24 @@ export const DonationScheduleService = {
         };
     },
 
-    findByDonorId: async(donorId: string, page: number = 1) => {
+    findByDonorId: async(donorId: string, page: number = 1, status?: DonationScheduleStatus) => {
         const pagination = PaginationUtils.calculatePage(page);
+        
+        let query:any = {};
+        if(status) query.status = status
+        // if the client wants a list of pending schedules 
+        // it translates to schedules without an assigned donor,
+        // only query by donor id if the status is anything but pending
+        if(status !== DonationScheduleStatus.PENDING) query.donor_id = donorId;
 
-        const schedules = await DonationScheduleModel.find({ donor_id: donorId })
+        const schedules = await DonationScheduleModel.find(query)
             .populate({
                 path: 'donor_id',
                 select: 'first_name last_name'
+            })
+            .populate({
+                path: 'facility_id',
+                select: 'name address operational_hours blood_types'
             })
             .skip(pagination.list_offset)
             .limit(pagination.results_per_page)
@@ -66,7 +81,7 @@ export const DonationScheduleService = {
                 throw new InternalServerError("Failed to fetch donation schedules");
             });
 
-        const total = await DonationScheduleModel.countDocuments({ donor_id: donorId });
+        const total = await DonationScheduleModel.countDocuments(query);
 
         return {
             list: schedules.map(schedule => DonationScheduleEntity.fromRecord(schedule)),
@@ -136,7 +151,7 @@ export const DonationScheduleService = {
         return DonationScheduleEntity.fromRecord(updatedRecord)
     },
 
-    assignDonor: async(scheduleId: string, userId: string)=> {
+    assignDonor: async(scheduleId: string, userId: string, preferredDate: Date)=> {
         const schedule = await DonationScheduleModel.findById(scheduleId)
         .catch((error)=> {
             console.error("There was an error assigning donor to this donation request : ", error);
@@ -150,14 +165,21 @@ export const DonationScheduleService = {
         }
         
         const filter = { _id: scheduleId }
-        const updateObj = { donorId: userId }
-        const record =  await DonationScheduleModel.findByIdAndUpdate(filter, updateObj)
+        const updateObj = { 
+            $set: {
+                donor_id: userId, 
+                preferred_date: preferredDate,
+                status: DonationScheduleStatus.APPROVED
+            }
+        }
+
+        const record =  await DonationScheduleModel.findOneAndUpdate(filter, updateObj, { new: true })
         .catch((error)=> {
             console.error("There was an error assigning donor to this donation request : ", error);
             throw new InternalServerError("");
         })
 
-        if(!record) throw new NotFoundError("There was an error ");
+        if(!record) throw new NotFoundError("There was an error assigning donor to schedule");
 
         return DonationScheduleEntity.fromRecord(record)
     },
