@@ -3,6 +3,7 @@ import { FacilityEntity } from "./facility.entity";
 import { ICreateFacility } from "./facility.types";
 import { FacilityModel } from "./model/facility.model";
 import { PaginationUtils } from "src/shared/utils/pagination.utils";
+import { DonorBloodTypes } from "src/modules/user/donor/model/donor.record";
 import { BloodInventoryService } from "../blood-inventory/blood-inventory.service";
 
 export const FacilityService = {
@@ -49,18 +50,30 @@ export const FacilityService = {
             .catch(()=> {  })
 
             let high, medium, low;
+            const bloodStock: Record<DonorBloodTypes, { units: number; status: string }> = {} as Record<DonorBloodTypes, { units: number; status: string }>;
 
-            if(inventories) {
+
+            if(inventories && inventories.length > 0) {
                 high = inventories.some(item => item.unitsAvailable <= 1) 
                 medium = inventories.some(item => item.unitsAvailable <= 6) 
                 low = inventories.some(item => item.unitsAvailable > 6)
+
+                //Add blood types to blood stock object
+                inventories.forEach(item => {
+                    bloodStock[item.bloodType] = {
+                        units: item.unitsAvailable,
+                        status: item.unitsAvailable <=1 ? 'critical' :
+                                item.unitsAvailable <= 6 ? 'low' : 'normal'
+                    }
+                })
             }
 
             facilityWithInventoryRecords.push({
                 ...FacilityEntity.fromRecordToEntity(facilityRecord),
                 urgency: high ? "high"
                             : medium ? "medium" 
-                            : "low"
+                            : "low",
+                bloodStock: bloodStock //include blood stock object
             })
 
         }

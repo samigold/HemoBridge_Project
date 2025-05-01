@@ -10,6 +10,7 @@ import { ICreateAdminProfile } from "./user.types";
 import { DonorEntity } from "../donor/donor.entity";
 import { CareGiverEntity } from "../care-giver/care-giver.entity";
 import { FacilityStaffEntity } from "src/modules/health-care-facility/facility-staff/facility-staff.entity";
+import { FacilityService } from "src/modules/health-care-facility/base/facility.service";
 import { AdminProfileEntity } from "./admin-profile/admin-profile.entity";
 
 interface IAllProfiles  {
@@ -26,7 +27,30 @@ export const ProfileService = {
             return await CareGiverService.getByUserId(user.id);
     
           case USER_ROLE.FACILITY_STAFF:
-            return await FacilityStaffService.getByUserId(user.id);
+
+          // fetch facility staff profile
+          const staffProfile = await FacilityStaffService.getByUserId(user.id);
+
+          if(!staffProfile) throw new NotFoundError("Facility staff profile not found");
+
+          // Get facility details to get name
+          const facilityDetails = await FacilityService.findById(staffProfile.facilityId)
+          .catch(()=> null );
+
+          //Get user details to get staff name
+
+          // const userDetails = await UserModel.findById(user.id)
+          // .select({ first_name: 1, last_name: 1 })
+          // .lean<{ first_name?: string; last_name?: string }>()
+          // .catch(() => null);
+
+
+            //Return the profile with facility name and user name
+            return {
+              ...staffProfile,
+              facilityName: facilityDetails?.name || "Facility not found"
+
+            }
 
           case USER_ROLE.ADMIN:
               return await this.fetchAdminProfile(user.id);
