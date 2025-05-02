@@ -133,13 +133,17 @@ export const DonationScheduleController = {
     },
 
     fetchDonorSchedules: async(req: Request, res: Response) => {
-        const { page, status } = req.query;
+        const { page, status, creator } = req.query;
         const { id, role } = req.user!; // from auth middleware
 
         const requestStatus = status as DonationScheduleStatus
-      
+        let requestCreator = false;
 
-        if(status !== "undefined" && status !== undefined) {
+        if(creator !== null && creator === "true") {
+            requestCreator = true
+        }
+
+        if(status !== "undefined") {
             if(!Object.values(DonationScheduleStatus).includes(requestStatus)) {
                 throw new ValidationError("Invalid donation schedule status");
             }
@@ -152,8 +156,8 @@ export const DonationScheduleController = {
             donorId: donorProfile.id,
             page: Number(page) || 1,
             status: requestStatus,
-            creator: false,
-            createdBy: DonationScheduleCreator.FACILITY_STAFF
+            creator: requestCreator
+
         }).catch(()=> { throw new InternalServerError("") })
 
         res.status(200).json({
