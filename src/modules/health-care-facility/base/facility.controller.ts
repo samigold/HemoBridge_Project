@@ -13,7 +13,7 @@ export const FacilityController = {
             facilityName,
             operationalHours,
             address,
-            bloodTypes,
+            // bloodTypes,
             personnelFirstname,
             personnelLastname,
             personnelEmail,
@@ -25,8 +25,8 @@ export const FacilityController = {
         if(!facilityName ||
             !operationalHours ||
             !address ||
-            !bloodTypes ||
-            !bloodTypes.length ||
+            // !bloodTypes ||
+            // !bloodTypes.length ||
             !personnelFirstname ||
             !personnelLastname ||
             !personnelEmail ||
@@ -41,7 +41,7 @@ export const FacilityController = {
             address: address,
             // phoneNumber,
             operationalHours: operationalHours ?? "9AM to 5PM",
-            bloodTypes: bloodTypes
+            bloodTypes: []
         
         }).catch((error)=> {
             console.error("There was an error creating health care facility: ", error);

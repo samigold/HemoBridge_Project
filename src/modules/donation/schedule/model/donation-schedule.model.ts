@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { DonationScheduleRecord, DonationScheduleStatus, DonationScheduleUrgency } from './donation-schedule.record';
+import { DonationScheduleCreator, DonationScheduleRecord, DonationScheduleStatus, DonationScheduleUrgency } from './donation-schedule.record';
 import { DonorBloodTypes } from 'src/modules/user/donor/model/donor.record';
 
 const DonationScheduleSchema = new mongoose.Schema<DonationScheduleRecord>({
@@ -10,6 +10,11 @@ const DonationScheduleSchema = new mongoose.Schema<DonationScheduleRecord>({
     facility_id: {
         type: String,
         ref: "health_care_facilities",
+        required: true
+    },
+    created_by: {
+        type: String,
+        enum: DonationScheduleCreator,
         required: true
     },
     blood_type: {

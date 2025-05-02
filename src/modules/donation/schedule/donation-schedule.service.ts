@@ -2,7 +2,7 @@ import { PaginationUtils } from "src/shared/utils/pagination.utils";
 import { DonationScheduleEntity } from "./donation-schedule.entity";
 import { DonationScheduleModel } from "./model/donation-schedule.model";
 import { InternalServerError, NotFoundError, ValidationError } from "src/shared/errors";
-import { DonationScheduleStatus } from "./model/donation-schedule.record";
+import { DonationScheduleCreator, DonationScheduleStatus } from "./model/donation-schedule.record";
 import { BloodInventoryService } from "src/modules/health-care-facility/blood-inventory/blood-inventory.service";
 
 export const DonationScheduleService = {
@@ -10,6 +10,7 @@ export const DonationScheduleService = {
         const schedule = await DonationScheduleModel.create({
             donor_id: scheduleData.donorId,
             facility_id: scheduleData.facilityId,
+            created_by: scheduleData.createdBy,
             blood_type: scheduleData.bloodType,
             units_requested: scheduleData.unitsRequested,
             preferred_date: scheduleData.preferredDate,
@@ -25,12 +26,13 @@ export const DonationScheduleService = {
         return DonationScheduleEntity.fromRecord(schedule);
     },
 
-    findByFacilityId: async(facilityId: string, page: number = 1, status?: DonationScheduleStatus) => {
+    findByFacilityId: async({ page = 1, facilityId, status, creator }: { facilityId: string, page: number, status?: DonationScheduleStatus, creator: boolean }) => {
         const pagination = PaginationUtils.calculatePage(page);
-
-        let query:any = {};
+        
+        let query:any = { created_by: DonationScheduleCreator.FACILITY_STAFF };
         query.facility_id = facilityId;
         if(status) query.status = status
+        if(creator) query.created_by = DonationScheduleCreator.FACILITY_STAFF;
 
         const schedules = await DonationScheduleModel.find(query)
         .populate({
@@ -54,15 +56,16 @@ export const DonationScheduleService = {
         };
     },
 
-    findByDonorId: async(donorId: string, page: number = 1, status?: DonationScheduleStatus) => {
+    findByDonorId: async({ page = 1, donorId, status, creator = false }: { donorId: string, page: number, status?: DonationScheduleStatus, creator: boolean}) => {
         const pagination = PaginationUtils.calculatePage(page);
         
-        let query:any = {};
+        let query:any = { };
         if(status) query.status = status
         // if the client wants a list of pending schedules 
         // it translates to schedules without an assigned donor,
         // only query by donor id if the status is anything but pending
         if(status !== DonationScheduleStatus.PENDING) query.donor_id = donorId;
+        if(creator) query.created_by = DonationScheduleCreator.DONOR;
 
         const schedules = await DonationScheduleModel.find(query)
             .populate({
@@ -104,6 +107,35 @@ export const DonationScheduleService = {
         if(!schedule) return null
 
         return DonationScheduleEntity.fromRecord(schedule);
+    },
+
+    find: async(creator: DonationScheduleCreator, page: number)=> {
+        const pagination = PaginationUtils.calculatePage(page);
+
+        const schedules = await DonationScheduleModel.find({ created_by: creator })
+        .populate({
+            path: 'donor_id',
+            select: 'first_name last_name'
+        })
+        .populate({
+            path: 'facility_id',
+            select: 'name address operational_hours blood_types'
+        })
+        .skip(pagination.list_offset)
+        .limit(pagination.results_per_page)
+        .sort({ created_at: "desc" })
+        .catch((error)=> {
+            console.error("Error fetching donor donation schedules:", error);
+            throw new InternalServerError("Failed to fetch donation schedules");
+        });
+
+        const total = await DonationScheduleModel.countDocuments({ created_by: creator });
+
+        return {
+            list: schedules.map(schedule => DonationScheduleEntity.fromRecord(schedule)),
+            currentPage: page,
+            totalPages: Math.ceil(total / pagination.results_per_page)
+        };
     },
 
     approveSchedule: async(scheduleId: string)=> {
