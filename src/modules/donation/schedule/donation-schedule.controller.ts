@@ -96,8 +96,34 @@ export const DonationScheduleController = {
             }
         }
 
-        const schedules = await DonationScheduleService.find(requestCreator, Number(page) || 1)
-        .catch(()=> { throw new InternalServerError("") })
+        // if the user is requesting schedules created by a donor and the user is a donor: query the list by user id.
+        // if the user is requesting schedules created by donors and the user is a facility_staff: query the list the facility id.
+        // if the user is requesting schedules created by facility_staff and the user is a donor: query the list by facility id.
+
+        let donorId = undefined, facilityId = undefined;
+
+        if(req.user?.role === USER_ROLE.DONOR && creator === DonationScheduleCreator.DONOR) {
+            donorId = req.user.role
+        }
+
+        if(req.user?.role === USER_ROLE.FACILITY_STAFF) {
+            // Get facility ID for staff member
+            const staffProfile = await FacilityStaffService.getByUserId(req.user.id)
+            .catch(error => {
+                console.error("Error finding facility staff profile:", error);
+                throw new InternalServerError("Error retrieving facility information");
+            });
+            
+            facilityId = staffProfile.facilityId
+        }
+
+        const schedules = await DonationScheduleService.find({
+            creator: requestCreator, 
+            page: Number(page) || 1,
+            donorId,
+            facilityId
+
+        }).catch(()=> { throw new InternalServerError("") })
 
         res.status(200).json({
             success: true,
