@@ -61,7 +61,7 @@ export const BloodInventoryController = {
             id: inventoryId,
             facilityId,
             bloodType: bloodType as DonorBloodTypes,
-            unitsAvailable: Number(unitsAvailable + inventoryExists.unitsAvailable)
+            unitsAvailable: Number(unitsAvailable)
         })
         .catch((error)=> {
             console.error("Error updating inventory:", error);
