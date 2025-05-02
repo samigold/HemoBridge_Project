@@ -63,8 +63,8 @@ export const BloodInventoryController = {
             bloodType: bloodType as DonorBloodTypes,
             unitsAvailable: Number(unitsAvailable)
         })
-        .catch((error)=> {
-            console.error("Error updating inventory:", error);
+        .catch(()=> {
+            console.error("Error updating inventory:");
             throw new InternalServerError("Failed to update blood inventory");
         });
 
