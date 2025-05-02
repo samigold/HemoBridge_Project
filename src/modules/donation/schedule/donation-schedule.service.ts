@@ -56,16 +56,31 @@ export const DonationScheduleService = {
         };
     },
 
-    findByDonorId: async({ page = 1, donorId, status, creator = false }: { donorId: string, page: number, status?: DonationScheduleStatus, creator: boolean}) => {
+    findByDonorId: async({ page = 1, donorId, status, creator = false, createdBy = undefined }: { donorId: string, page: number, status?: DonationScheduleStatus, creator: boolean, createdBy?: DonationScheduleCreator }) => {
         const pagination = PaginationUtils.calculatePage(page);
         
-        let query:any = { };
+        let query:any = { donor_id: donorId };
+
+        //Add status to query if provided
         if(status) query.status = status
         // if the client wants a list of pending schedules 
         // it translates to schedules without an assigned donor,
         // only query by donor id if the status is anything but pending
         if(status !== DonationScheduleStatus.PENDING) query.donor_id = donorId;
-        if(creator) query.created_by = DonationScheduleCreator.DONOR;
+
+        //Add creator filter
+        if(creator) {
+            //show all schedules created by the donor
+            query.created_by = DonationScheduleCreator.DONOR;
+        } else if(createdBy) {
+            //show all schedules created by the facility staff
+            // if the creator is not the donor, then it must be the facility staff
+            query.created_by = createdBy;
+        } else {
+
+            //show all schedules created by the facility staff
+            query.created_by = DonationScheduleCreator.FACILITY_STAFF;
+        }
 
         const schedules = await DonationScheduleModel.find(query)
             .populate({
