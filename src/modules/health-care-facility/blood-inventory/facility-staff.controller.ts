@@ -65,11 +65,7 @@ export const BloodInventoryController = {
         })
         .catch((error)=> {
             console.error("Error updating inventory:", error);
-            if (error.message && error.message.includes("donor")) {
-                throw new InternalServerError("Failed to update blood inventory due to internal error");
-            } else {
-                throw new InternalServerError("Failed to update blood inventory");
-            }
+            throw new InternalServerError("Failed to update blood inventory");
         });
 
         //return response
