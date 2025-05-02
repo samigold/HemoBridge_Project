@@ -3,7 +3,7 @@ import { DonationScheduleService } from "./donation-schedule.service";
 import { ValidationError, InternalServerError, NotFoundError } from "src/shared/errors";
 import { FacilityStaffService } from "src/modules/health-care-facility/facility-staff/facility-staff.service";
 import { USER_ROLE } from "src/shared/constants/user-role.enum";
-import { DonationScheduleStatus } from "./model/donation-schedule.record";
+import { DonationScheduleCreator, DonationScheduleStatus } from "./model/donation-schedule.record";
 import { ProfileService } from "src/modules/user/profile/profile.service";
 
 export const DonationScheduleController = {
@@ -15,7 +15,8 @@ export const DonationScheduleController = {
             unitsRequested,
             additionalNotes,
             preferredDate,
-            urgencyLevel
+            urgencyLevel,
+            createdBy
             
         } = req.body;
 
@@ -24,6 +25,8 @@ export const DonationScheduleController = {
             if(!donorId || !facilityId || !bloodType || !preferredDate) {
                 throw new ValidationError("Required fields missing");
             }
+
+            createdBy = DonationScheduleCreator.DONOR;
         }
 
         if(req.user!.role === USER_ROLE.FACILITY_STAFF) {
@@ -35,6 +38,7 @@ export const DonationScheduleController = {
             const facilityStaff = await FacilityStaffService.getByUserId(req.user!.id)
 
             facilityId = facilityStaff.facilityId
+            createdBy = DonationScheduleCreator.FACILITY_STAFF;
         }
 
         // Clean and validate date format
@@ -57,6 +61,7 @@ export const DonationScheduleController = {
         const schedule = await DonationScheduleService.create({
             donorId,
             facilityId, 
+            createdBy,
             bloodType,
             unitsRequested: unitsRequested || 1,
             additionalNotes,
@@ -75,25 +80,59 @@ export const DonationScheduleController = {
         });
     },
 
+    fetchSchedulesByCreator: async(req: Request, res: Response) => {
+        const { page, status, creator } = req.query;
+
+        const requestStatus = status as DonationScheduleStatus;
+        let requestCreator = creator as DonationScheduleCreator;
+
+        if(!creator) {
+            throw new ValidationError(`Invalid donation schedule creator ${Object.values(DonationScheduleCreator).join(", ")}`);
+        }
+
+        if(status !== "undefined") {
+            if(!Object.values(DonationScheduleStatus).includes(requestStatus)) {
+                throw new ValidationError("Invalid donation schedule status");
+            }
+        }
+
+        const schedules = await DonationScheduleService.find(requestCreator, Number(page) || 1)
+        .catch(()=> { throw new InternalServerError("") })
+
+        res.status(200).json({
+            success: true,
+            message: "Donation schedules retrieved successfully",
+            data: schedules
+        });
+    },
+
     fetchDonorSchedules: async(req: Request, res: Response) => {
-        const { page, status } = req.query;
+        const { page, status, creator } = req.query;
         const { id, role } = req.user!; // from auth middleware
 
         const requestStatus = status as DonationScheduleStatus
+        let requestCreator = false;
 
-        if(requestStatus &&!Object.values(DonationScheduleStatus).includes(requestStatus)) {
-            throw new ValidationError("Invalid donation schedule stats");
+        if(creator !== null && creator === "true") {
+            requestCreator = true
+        }
+
+        if(status !== "undefined") {
+            if(!Object.values(DonationScheduleStatus).includes(requestStatus)) {
+                throw new ValidationError("Invalid donation schedule status");
+            }
         }
 
         const donorProfile = await ProfileService.getProfileByRole({id, role })
         .catch(()=> { throw new InternalServerError("") })
 
-        const schedules = await DonationScheduleService.findByDonorId(
-            donorProfile.id,
-            Number(page) || 1,
-            requestStatus
+        const schedules = await DonationScheduleService.findByDonorId({
+            donorId: donorProfile.id,
+            page: Number(page) || 1,
+            status: requestStatus,
+            creator: requestCreator
 
-        ).catch(()=> { throw new InternalServerError("") })
+        }).catch(()=> { throw new InternalServerError("") })
 
         res.status(200).json({
             success: true,
@@ -103,8 +142,14 @@ export const DonationScheduleController = {
     },
 
     fetchFacilitySchedules: async(req: Request, res: Response) => {
-        const { page } = req.query;
+        const { page, creator } = req.query;
         const { id } = req.user!; // from auth middleware
+
+        let requestCreator = false;
+
+        if(creator !== null && creator === "true") {
+            requestCreator = true
+        }
 
         // Get facility ID for staff member
         const staffProfile = await FacilityStaffService.getByUserId(id)
@@ -117,7 +162,11 @@ export const DonationScheduleController = {
             throw new ValidationError("Invalid facility staff profile");
         }
 
-        const schedules = await DonationScheduleService.findByFacilityId(staffProfile.facilityId, Number(page) || 1)
+        const schedules = await DonationScheduleService.findByFacilityId({
+            facilityId: staffProfile.facilityId, 
+            page: Number(page) || 1,
+            creator: requestCreator
+        })
         .catch(error => {
             console.error("Error finding facility donation schedules :", error);
             throw new InternalServerError("Error retrieving facility donation schedules");

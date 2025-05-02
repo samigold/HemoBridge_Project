@@ -1,7 +1,6 @@
 import { Types } from "mongoose";
 import { DonorBloodTypes } from "src/modules/user/donor/model/donor.record";
-import { DonationScheduleRecord, DonationScheduleStatus, DonationScheduleUrgency } from "./model/donation-schedule.record";
-import { FacilityEntity } from "src/modules/health-care-facility/base/facility.entity";
+import { DonationScheduleCreator, DonationScheduleRecord, DonationScheduleStatus, DonationScheduleUrgency } from "./model/donation-schedule.record";
 
 interface PopulatedDonor {
     firstName: string;
@@ -20,6 +19,7 @@ export interface DonationScheduleEntity {
     id?: string;
     donorId?: string | PopulatedDonor;
     facilityId?: string | PopulatedFacility;
+    createdBy: DonationScheduleCreator;
     bloodType: DonorBloodTypes;
     unitsRequested: number;
     additionalNotes?: string;
@@ -57,6 +57,7 @@ export const DonationScheduleEntity = {
             id: record.id,
             donorId: donor,
             facilityId: facility,
+            createdBy: record.created_by,
             bloodType: record.blood_type,
             unitsRequested: record.units_requested,
             additionalNotes: record.additional_notes,
