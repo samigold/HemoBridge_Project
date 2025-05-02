@@ -109,10 +109,14 @@ export const DonationScheduleService = {
         return DonationScheduleEntity.fromRecord(schedule);
     },
 
-    find: async(creator: DonationScheduleCreator, page: number)=> {
+    find: async({ creator, page, donorId, facilityId }: {creator: DonationScheduleCreator, page: number, donorId?: string, facilityId?: string})=> {
         const pagination = PaginationUtils.calculatePage(page);
+        
+        let query:any = { created_by: creator };
+        if(donorId) query.donor_id = donorId;
+        if(facilityId) query.facility_id = facilityId;
 
-        const schedules = await DonationScheduleModel.find({ created_by: creator })
+        const schedules = await DonationScheduleModel.find(query)
         .populate({
             path: 'donor_id',
             select: 'first_name last_name'
@@ -129,7 +133,7 @@ export const DonationScheduleService = {
             throw new InternalServerError("Failed to fetch donation schedules");
         });
 
-        const total = await DonationScheduleModel.countDocuments({ created_by: creator });
+        const total = await DonationScheduleModel.countDocuments(query);
 
         return {
             list: schedules.map(schedule => DonationScheduleEntity.fromRecord(schedule)),
