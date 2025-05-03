@@ -103,7 +103,7 @@ export const DonationScheduleController = {
         let donorId = undefined, facilityId = undefined;
 
         if(req.user?.role === USER_ROLE.DONOR && creator === DonationScheduleCreator.DONOR) {
-            donorId = req.user.role
+            donorId = req.user.id
         }
 
         if(req.user?.role === USER_ROLE.FACILITY_STAFF) {
@@ -119,6 +119,7 @@ export const DonationScheduleController = {
 
         const schedules = await DonationScheduleService.find({
             creator: requestCreator, 
+            status: requestStatus,
             page: Number(page) || 1,
             donorId,
             facilityId
@@ -214,6 +215,9 @@ export const DonationScheduleController = {
         .catch(()=> { throw new InternalServerError("") });
 
         if(!foundDonationScheduleRecord) throw new NotFoundError("Donation schedule not found");
+        if(foundDonationScheduleRecord.createdBy !== DonationScheduleCreator.DONOR) {
+            throw new NotFoundError("Donation schedule can't be approved by a facility if it was not created by a donor");
+        }
 
         await DonationScheduleService.approveSchedule(donationScheduleId as string)
         .catch((error)=> { 
