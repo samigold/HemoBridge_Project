@@ -33,7 +33,7 @@ export const DonationScheduleService = {
         query.facility_id = facilityId;
         if(status) query.status = status
         if(creator) query.created_by = DonationScheduleCreator.FACILITY_STAFF;
-
+    console.log("he", query)
         const schedules = await DonationScheduleModel.find(query)
         .populate({
             path: 'donor_id',
@@ -60,7 +60,8 @@ export const DonationScheduleService = {
         const pagination = PaginationUtils.calculatePage(page);
         
         let query:any = { };
-        if(status) query.status = status
+        if(status && Object.values(DonationScheduleStatus).includes(status)) query.status = status
+        console.log(Object.values(DonationScheduleStatus), status)
         // if the client wants a list of pending schedules 
         // it translates to schedules without an assigned donor,
         // only query by donor id if the status is anything but pending
@@ -112,10 +113,11 @@ export const DonationScheduleService = {
     find: async({ creator, status, page, donorId, facilityId }: {creator: DonationScheduleCreator, status: DonationScheduleStatus, page: number, donorId?: string, facilityId?: string})=> {
         const pagination = PaginationUtils.calculatePage(page);
         
-        let query:any = { created_by: creator, status };
+        let query:any = { created_by: creator };
+        if(status && status.toString() !== 'undefined') query.status = status;
         if(donorId) query.donor_id = donorId;
         if(facilityId) query.facility_id = facilityId;
-console.log(query)
+
         const schedules = await DonationScheduleModel.find(query)
         .populate({
             path: 'donor_id',

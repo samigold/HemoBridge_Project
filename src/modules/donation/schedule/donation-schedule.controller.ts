@@ -134,6 +134,7 @@ export const DonationScheduleController = {
     },
 
     fetchDonorSchedules: async(req: Request, res: Response) => {
+        console.log("ER")
         const { page, status, creator } = req.query;
         const { id, role } = req.user!; // from auth middleware
 
@@ -169,6 +170,7 @@ export const DonationScheduleController = {
     },
 
     fetchFacilitySchedules: async(req: Request, res: Response) => {
+        console.log("find facilt")
         const { page, creator } = req.query;
         const { id } = req.user!; // from auth middleware
 
