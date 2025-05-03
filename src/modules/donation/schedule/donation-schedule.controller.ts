@@ -214,6 +214,9 @@ export const DonationScheduleController = {
         .catch(()=> { throw new InternalServerError("") });
 
         if(!foundDonationScheduleRecord) throw new NotFoundError("Donation schedule not found");
+        if(foundDonationScheduleRecord.createdBy !== DonationScheduleCreator.DONOR) {
+            throw new NotFoundError("Donation schedule can't be approved by a facility if it was not created by a donor");
+        }
 
         await DonationScheduleService.approveSchedule(donationScheduleId as string)
         .catch((error)=> { 
