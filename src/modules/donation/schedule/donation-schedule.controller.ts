@@ -103,7 +103,7 @@ export const DonationScheduleController = {
         let donorId = undefined, facilityId = undefined;
 
         if(req.user?.role === USER_ROLE.DONOR && creator === DonationScheduleCreator.DONOR) {
-            donorId = req.user.role
+            donorId = req.user.id
         }
 
         if(req.user?.role === USER_ROLE.FACILITY_STAFF) {
@@ -119,6 +119,7 @@ export const DonationScheduleController = {
 
         const schedules = await DonationScheduleService.find({
             creator: requestCreator, 
+            status: requestStatus,
             page: Number(page) || 1,
             donorId,
             facilityId

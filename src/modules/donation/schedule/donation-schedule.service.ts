@@ -109,13 +109,13 @@ export const DonationScheduleService = {
         return DonationScheduleEntity.fromRecord(schedule);
     },
 
-    find: async({ creator, page, donorId, facilityId }: {creator: DonationScheduleCreator, page: number, donorId?: string, facilityId?: string})=> {
+    find: async({ creator, status, page, donorId, facilityId }: {creator: DonationScheduleCreator, status: DonationScheduleStatus, page: number, donorId?: string, facilityId?: string})=> {
         const pagination = PaginationUtils.calculatePage(page);
         
-        let query:any = { created_by: creator };
+        let query:any = { created_by: creator, status };
         if(donorId) query.donor_id = donorId;
         if(facilityId) query.facility_id = facilityId;
-
+console.log(query)
         const schedules = await DonationScheduleModel.find(query)
         .populate({
             path: 'donor_id',
